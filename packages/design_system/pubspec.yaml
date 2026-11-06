@@ -1,0 +1,19 @@
+# Tầng 2 (nền tảng) - UI thuần: theme, token màu/chữ, component dùng chung.
+# Không phụ thuộc package nội bộ nào để có thể đem sang app khác hoặc
+# xem riêng trong widgetbook.
+name: design_system
+description: Theme, design token và component UI dùng chung.
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

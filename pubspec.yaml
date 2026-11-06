@@ -1,0 +1,193 @@
+# =============================================================================
+# pubspec.yaml ở ROOT của monorepo
+#
+# File này đóng 2 vai trò cùng lúc:
+#   1. Định nghĩa Pub Workspace (key `workspace:`): cho Dart biết những package
+#      nào thuộc cùng một repo. Dart sẽ resolve dependency MỘT LẦN cho tất cả,
+#      sinh ra MỘT file pubspec.lock duy nhất ở đây.
+#   2. Cấu hình melos (key `melos:`): script dùng chung, bộ lọc package...
+#      Từ melos 7.x không còn file melos.yaml nữa, mọi thứ nằm ở đây.
+#
+# Tại sao root KHÔNG phải là một app?
+#   Melos khuyến nghị root chỉ chứa cấu hình chung. App thật nằm ở apps/,
+#   thư viện nằm ở packages/. Nhờ vậy lint, script, CI áp dụng đồng nhất
+#   cho mọi package, không có "package đặc biệt" nào nằm ở root.
+# =============================================================================
+name: flutter_monorepo_sample
+description: Monorepo mẫu Flutter theo chuẩn team lớn (Bloc + Clean Architecture).
+publish_to: none
+
+environment:
+  # Pub Workspaces yêu cầu tối thiểu Dart 3.6. Ta dùng 3.13 vì
+  # very_good_analysis và freezed bản hiện tại đều yêu cầu Dart 3.13.
+  sdk: ^3.13.0
+
+# -----------------------------------------------------------------------------
+# Danh sách thành viên workspace.
+#
+# Tại sao liệt kê tường minh thay vì dùng glob (vd: `packages/*`)?
+#   Dart 3.11+ có hỗ trợ glob, nhưng liệt kê từng package giúp:
+#   - Người mới nhìn vào là thấy ngay repo có những package nào.
+#   - Thêm package mới bắt buộc phải sửa file này -> PR đó sẽ được
+#     review kỹ hơn (thêm package = thay đổi kiến trúc).
+#
+# Thứ tự dưới đây đi từ tầng thấp (lõi) lên tầng cao (app) cho dễ đọc,
+# Dart không quan tâm thứ tự.
+# -----------------------------------------------------------------------------
+workspace:
+  # Tầng 1: lõi, Dart thuần
+  - packages/shared_domain
+  # Tầng 2: nền tảng dùng chung
+  - packages/core
+  - packages/design_system
+  - packages/l10n
+  # Tầng 3: tính năng (KHÔNG được phụ thuộc lẫn nhau)
+  - packages/features/feature_auth
+  - packages/features/feature_product
+  - packages/features/feature_settings
+  # Tầng 4: ứng dụng
+  - apps/main_app
+  - apps/widgetbook_app
+  # Công cụ nội bộ của repo (không thuộc app)
+  - tools/arch_check
+
+dev_dependencies:
+  # Khai báo melos ở đây để CẢ TEAM và CI dùng cùng một version melos.
+  # Melos cài global sẽ tự chuyển sang version ghi trong file này.
+  melos: ^8.10.0
+  # Bộ lint nghiêm ngặt của Very Good Ventures, dùng chung toàn repo qua
+  # analysis_options.yaml ở root.
+  very_good_analysis: ^11.0.0
+
+melos:
+  # ---------------------------------------------------------------------------
+  # Nhóm package theo tầng để có thể lọc, ví dụ:
+  #   melos exec --category=features -- flutter test
+  # `packages/*` không khớp `packages/features/feature_auth` vì `*` không đi
+  # xuyên qua dấu `/`.
+  # ---------------------------------------------------------------------------
+  categories:
+    apps:
+      - apps/*
+    features:
+      - packages/features/*
+    foundation:
+      - packages/*
+    tools:
+      - tools/*
+
+  command:
+    bootstrap:
+      # Đồng bộ ràng buộc SDK cho MỌI package mỗi lần chạy `melos bootstrap`.
+      # Tại sao? Khi nâng Dart lên bản mới, chỉ cần sửa 1 chỗ ở đây thay vì
+      # sửa 10 file pubspec.yaml (và không ai quên package nào).
+      environment:
+        sdk: ^3.13.0
+
+    run:
+      # Script có `packageFilters` mặc định sẽ HỎI người dùng chọn package.
+      # Trên CI không có ai trả lời -> treo. Tắt hỏi để luôn chạy mọi package
+      # khớp bộ lọc (muốn giới hạn thì dùng --scope khi chạy).
+      noSelect: true
+
+  # ---------------------------------------------------------------------------
+  # Script dùng chung. Chạy bằng `melos run <tên>` (hoặc `melos <tên>`).
+  #
+  # LƯU Ý QUAN TRỌNG: script trùng tên lệnh có sẵn của melos (analyze, test,
+  # format, clean) sẽ GHI ĐÈ lệnh đó. Vì vậy bên trong script `test` tuyệt đối
+  # không gọi `melos test` (sẽ tự gọi lại chính nó -> lặp vô hạn).
+  # ---------------------------------------------------------------------------
+  scripts:
+    analyze:
+      description: Phân tích tĩnh toàn repo (very_good_analysis) sau khi kiểm tra quy tắc kiến trúc.
+      # Chạy `dart analyze` MỘT LẦN ở root thay vì từng package: với Pub
+      # Workspaces, analyzer dùng chung một package_config nên phân tích cả
+      # repo một lượt nhanh hơn nhiều so với khởi động analyzer 10 lần.
+      run: dart analyze --fatal-infos .
+      dependsOn:
+        - check:arch
+
+    check:arch:
+      description: Kiểm tra quy tắc phụ thuộc giữa các package và độ "sạch" của domain layer.
+      run: dart run tools/arch_check/bin/arch_check.dart
+
+    test:
+      description: Chạy unit/widget test của mọi package có thư mục test/.
+      # Script chỉ gồm `dependsOn` = một "nhóm" script. Tách đôi vì package
+      # Dart thuần phải chạy bằng `dart test`, package Flutter bằng `flutter test`.
+      dependsOn:
+        - test:dart
+        - test:flutter
+
+    test:dart:
+      private: true
+      exec:
+        command: dart test
+        failFast: true
+      packageFilters:
+        flutter: false
+        dirExists: test
+
+    test:flutter:
+      private: true
+      exec:
+        # --no-pub: bỏ bước `pub get` mà flutter test tự chạy mỗi lần, vì
+        # `melos bootstrap` đã resolve cho cả workspace rồi -> nhanh hơn.
+        command: flutter test --no-pub
+        # Mỗi lệnh `flutter test` đã tự chạy song song các file test bên trong.
+        # Chạy thêm nhiều package song song dễ làm máy CI hết RAM.
+        concurrency: 1
+        failFast: true
+      packageFilters:
+        flutter: true
+        dirExists: test
+
+    format:
+      description: Format toàn bộ code Dart trong repo.
+      run: dart format .
+
+    format:check:
+      description: Kiểm tra format, có file chưa format thì fail (dùng trong CI).
+      run: dart format --output=none --set-exit-if-changed .
+
+    gen:
+      description: Sinh code (freezed, json, retrofit, injectable, drift, slang...) cho mọi package dùng codegen.
+      # Viết dạng nhóm (`dependsOn`) thay vì `exec` trực tiếp: script con
+      # không khớp package nào chỉ bị bỏ qua kèm cảnh báo, không làm fail.
+      # Hữu ích khi chạy `melos run gen --scope=<package không có codegen>`.
+      dependsOn:
+        - gen:build_runner
+
+    gen:build_runner:
+      private: true
+      exec:
+        command: dart run build_runner build
+        # Tại sao chạy tuần tự và theo thứ tự phụ thuộc?
+        # injectable ở main_app cần đọc file sinh ra của các feature
+        # (module DI của từng package). Nếu main_app chạy trước feature thì
+        # sẽ thiếu file -> lỗi. `orderDependents` đảm bảo package lá chạy trước.
+        concurrency: 1
+        orderDependents: true
+        failFast: true
+      packageFilters:
+        dependsOn: build_runner
+
+    clean:
+      description: Xoá build/ và .dart_tool/ của mọi package. Sau đó chạy lại `melos bootstrap`.
+      dependsOn:
+        - clean:flutter
+        - clean:dart
+
+    clean:flutter:
+      private: true
+      exec: flutter clean
+      packageFilters:
+        flutter: true
+
+    clean:dart:
+      private: true
+      # Package Dart thuần không dùng được `flutter clean`.
+      # (Lệnh rm chỉ chạy trên macOS/Linux; team dùng Windows cần đổi lại.)
+      exec: rm -rf build .dart_tool coverage
+      packageFilters:
+        flutter: false

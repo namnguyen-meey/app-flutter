@@ -1,0 +1,22 @@
+# Tầng 4 (app) - catalog UI để xem, thử từng component của design_system
+# độc lập với app chính. Chỉ phụ thuộc design_system.
+name: widgetbook_app
+description: Catalog UI (widgetbook) cho design system.
+publish_to: none
+version: 0.1.0+1
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  design_system: ^0.1.0
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

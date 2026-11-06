@@ -1,0 +1,16 @@
+# Công cụ nội bộ của repo (không thuộc app) - kiểm tra quy tắc kiến trúc:
+# package nào được phụ thuộc package nào, domain layer có "sạch" không.
+# Chạy qua `melos run check:arch` (đã gắn vào `melos run analyze` và CI).
+name: arch_check
+description: Kiểm tra quy tắc phụ thuộc giữa các package trong monorepo.
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+dependencies:
+  path: ^1.9.1
+  yaml: ^3.1.4
+dev_dependencies:
+  test: ^1.31.1

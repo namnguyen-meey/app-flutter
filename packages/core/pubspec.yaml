@@ -1,0 +1,21 @@
+# Tầng 2 (nền tảng) - hạ tầng kỹ thuật dùng chung: network, storage, logger,
+# config/flavor, DI nền. Không chứa nghiệp vụ, không biết feature nào tồn tại.
+name: core
+description: Hạ tầng dùng chung - network (dio), storage, logger, config/flavor, DI nền.
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # core phụ thuộc shared_domain (KHÔNG có chiều ngược lại) để map lỗi
+  # hạ tầng (DioException...) thành Failure của domain.
+  shared_domain: ^0.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

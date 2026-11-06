@@ -1,0 +1,26 @@
+# =============================================================================
+# analysis_options.yaml DÙNG CHUNG cho toàn bộ monorepo.
+#
+# Analyzer tìm file analysis_options.yaml gần nhất, tính từ file .dart đi
+# ngược lên thư mục cha. Các package con cố ý KHÔNG có file riêng, nên tất cả
+# dùng chung file này: một bộ luật duy nhất, không package nào "lách luật".
+#
+# very_good_analysis bật sẵn các rule rất quan trọng với monorepo:
+#   - depend_on_referenced_packages: cấm import package chưa khai báo trong
+#     pubspec. Với Pub Workspaces, mọi package dùng chung một package_config
+#     nên về kỹ thuật feature_auth VẪN import được feature_product dù không
+#     khai báo. Rule này (cùng tools/arch_check) chặn lỗ hổng đó.
+#   - always_use_package_imports: luôn import dạng `package:...`.
+#   - sort_pub_dependencies: dependency trong pubspec phải xếp theo alphabet
+#     (giảm conflict khi nhiều người cùng thêm package).
+#   - public_member_api_docs: API public phải có doc comment.
+# =============================================================================
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    # Code sinh tự động: không sửa tay nên cũng không lint.
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    # Output build của Flutter.
+    - "**/build/**"
