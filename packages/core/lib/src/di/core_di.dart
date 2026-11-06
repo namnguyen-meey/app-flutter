@@ -82,4 +82,13 @@ abstract class CoreThirdPartyModule {
     sessionEvents: sessionEvents,
     talker: talker,
   );
+
+  /// Dio KHÔNG có AuthInterceptor, dành cho TokenRefresher.
+  ///
+  /// `@Named`: cùng kiểu `Dio` nên phải đặt tên để phân biệt. Nơi cần dùng
+  /// xin bằng `@Named(DioName.unauthenticated) Dio dio`.
+  @Named(DioName.unauthenticated)
+  @lazySingleton
+  Dio unauthenticatedDio(AppConfig config, Talker talker) =>
+      createUnauthenticatedDio(config: config, talker: talker);
 }

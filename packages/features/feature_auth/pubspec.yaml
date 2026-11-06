@@ -11,13 +11,32 @@ environment:
   sdk: ^3.13.0
 
 dependencies:
+  bloc: ^9.2.1
+  bloc_concurrency: ^0.3.0
   core: ^0.1.0
   design_system: ^0.1.0
+  dio: ^5.11.1
+  equatable: ^3.0.0
   flutter:
     sdk: flutter
+  flutter_bloc: ^9.1.1
+  flutter_secure_storage: ^11.2.0
+  fpdart: ^1.2.0
+  freezed_annotation: ^3.1.0
+  injectable: ^3.0.0
+  json_annotation: ^4.12.0
   l10n: ^0.1.0
+  material_ui: ^1.10.0
+  retrofit: ^4.10.0
   shared_domain: ^0.1.0
 
 dev_dependencies:
+  bloc_test: ^10.0.0
+  build_runner: ^2.16.1
   flutter_test:
     sdk: flutter
+  freezed: ^4.0.1
+  injectable_generator: ^3.1.3
+  json_serializable: ^6.15.2
+  mocktail: ^1.0.5
+  retrofit_generator: ^10.3.3

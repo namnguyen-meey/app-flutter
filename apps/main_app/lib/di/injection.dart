@@ -12,6 +12,7 @@
 // =============================================================================
 
 import 'package:core/core.dart';
+import 'package:feature_auth/feature_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:main_app/di/injection.config.dart';
@@ -26,7 +27,10 @@ final GetIt getIt = GetIt.instance;
 /// Khởi tạo DI cho [flavor].
 @InjectableInit(
   // Module của các package được đăng ký TRƯỚC phần của app.
-  externalPackageModulesBefore: [ExternalModule(CorePackageModule)],
+  externalPackageModulesBefore: [
+    ExternalModule(CorePackageModule),
+    ExternalModule(FeatureAuthPackageModule),
+  ],
   // Ở app gốc, thiếu dependency là lỗi thật: dừng build ngay thay vì chỉ
   // in cảnh báo rồi đợi tới lúc chạy mới crash.
   throwOnMissingDependencies: true,

@@ -13,6 +13,7 @@ export 'src/di/core_di.module.dart' show CorePackageModule;
 export 'src/error/failure_mapper.dart';
 export 'src/error/guard.dart';
 export 'src/logger/app_logger.dart';
+export 'src/network/dio_factory.dart' show DioName;
 export 'src/network/network_extras.dart';
 export 'src/session/auth_tokens.dart';
 export 'src/session/session_events.dart';

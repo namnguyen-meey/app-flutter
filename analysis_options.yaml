@@ -18,11 +18,14 @@
 include: package:very_good_analysis/analysis_options.yaml
 
 analyzer:
+  # CỐ Ý KHÔNG exclude code sinh tự động (*.g.dart, *.freezed.dart,
+  # *.config.dart, *.module.dart). `exclude` giấu luôn cả LỖI COMPILE trong
+  # các file đó, không chỉ lint. Ví dụ thật đã gặp: injectable sinh code gọi
+  # `dispose()` trên một interface không có hàm này; analyzer im lặng, chỉ tới
+  # lúc chạy test mới vỡ.
+  # Lint trong code sinh ra đã được tắt bằng `// ignore_for_file: type=lint`
+  # ở đầu từng file (các generator tự thêm; riêng json_serializable được cấu
+  # hình trong build.yaml ở root).
   exclude:
-    # Code sinh tự động: không sửa tay nên cũng không lint.
-    - "**/*.g.dart"
-    - "**/*.freezed.dart"
-    - "**/*.config.dart"
-    - "**/*.module.dart"
     # Output build của Flutter.
     - "**/build/**"

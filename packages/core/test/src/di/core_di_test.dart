@@ -48,4 +48,34 @@ void main() {
     expect(getIt<SessionEvents>(), same(getIt<SessionEvents>()));
     expect(getIt<Dio>().options.baseUrl, 'https://api.test');
   });
+
+  test('có 2 Dio riêng biệt; Dio phụ KHÔNG có AuthInterceptor', () async {
+    getIt
+      ..registerSingleton<AppConfig>(
+        const AppConfig(
+          flavor: Flavor.dev,
+          appName: 'Test',
+          apiBaseUrl: 'https://api.test',
+          enableLogs: false,
+          accessTokenLifetime: Duration(minutes: 1),
+        ),
+      )
+      ..registerSingleton<TokenRefresher>(_MockTokenRefresher());
+    await CorePackageModule().init(GetItHelper(getIt));
+
+    final mainDio = getIt<Dio>();
+    final unauthenticatedDio = getIt<Dio>(
+      instanceName: DioName.unauthenticated,
+    );
+
+    expect(unauthenticatedDio, isNot(same(mainDio)));
+    expect(
+      mainDio.interceptors.map((i) => i.runtimeType.toString()),
+      contains('AuthInterceptor'),
+    );
+    expect(
+      unauthenticatedDio.interceptors.map((i) => i.runtimeType.toString()),
+      isNot(contains('AuthInterceptor')),
+    );
+  });
 }

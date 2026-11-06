@@ -1,0 +1,16 @@
+# =============================================================================
+# build.yaml ở ROOT: tuỳ chọn build_runner áp dụng cho MỌI package.
+#
+# Khi chạy `dart run build_runner build --workspace` (script `melos run gen`),
+# phần `global_options` được đọc từ file này ở root workspace.
+# =============================================================================
+global_options:
+  # Builder gộp output của json_serializable (và các generator dựa trên
+  # source_gen) thành file .g.dart. Thêm `// ignore_for_file: type=lint` vào
+  # đầu file để lint không áp dụng cho code sinh tự động. Nhờ vậy
+  # analysis_options.yaml KHÔNG cần `exclude` các file này nữa, và lỗi compile
+  # trong code sinh ra (nếu có) vẫn được analyzer báo.
+  source_gen:combining_builder:
+    options:
+      ignore_for_file:
+        - type=lint

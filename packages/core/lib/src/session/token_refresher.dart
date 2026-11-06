@@ -27,7 +27,9 @@ abstract interface class TokenRefresher {
   /// - Ném exception: lỗi TẠM THỜI (mất mạng, server lỗi). KHÔNG đăng xuất
   ///   người dùng; lần gọi sau sẽ thử lại.
   ///
-  /// Request làm mới phải gắn `NetworkExtras.skipAuth` để không đi qua
-  /// luồng refresh lần nữa (tránh vòng lặp vô hạn).
+  /// Cài đặt phải gọi API bằng Dio `@Named(DioName.unauthenticated)` (không
+  /// có AuthInterceptor), KHÔNG dùng Dio chính. Lý do: Dio chính cần
+  /// TokenRefresher, nên TokenRefresher dùng Dio chính sẽ tạo vòng phụ thuộc;
+  /// đồng thời request làm mới không bao giờ tự kích hoạt luồng làm mới.
   Future<AuthTokens?> refresh(String refreshToken);
 }

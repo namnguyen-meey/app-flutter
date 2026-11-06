@@ -1,63 +1,82 @@
-// Widget test cho App: theme sáng/tối, đổi ngôn ngữ và dải băng flavor.
+// Widget test cho App khi đã đăng nhập: bottom navigation, tab cài đặt
+// (tài khoản, ngôn ngữ, giao diện, đăng xuất) và dải băng flavor.
 import 'package:core/core.dart';
+import 'package:feature_auth/feature_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:l10n/l10n.dart';
-import 'package:main_app/app.dart';
+import 'package:main_app/di/injection.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:shared_domain/shared_domain.dart';
 
-AppConfig _config(Flavor flavor) => AppConfig(
-  flavor: flavor,
-  appName: 'Shop Test',
-  apiBaseUrl: 'https://api.test',
-  enableLogs: false,
-  accessTokenLifetime: const Duration(minutes: 5),
-);
-
-/// Dựng App giống bootstrap.dart: bọc trong TranslationProvider.
-Future<void> _pumpApp(WidgetTester tester, {Flavor flavor = Flavor.dev}) {
-  return tester.pumpWidget(
-    TranslationProvider(child: App(config: _config(flavor))),
-  );
-}
+import 'helpers/pump_app.dart';
 
 void main() {
-  // LocaleSettings là trạng thái TOÀN CỤC của slang. Đặt lại về tiếng Việt
-  // trước mỗi test để kết quả không phụ thuộc thứ tự chạy test.
-  setUp(() => LocaleSettings.setLocaleSync(AppLocale.vi));
+  late MockAuthBloc authBloc;
 
-  testWidgets('mặc định hiển thị tiếng Việt', (tester) async {
-    await _pumpApp(tester);
-
-    expect(find.text('Xem trước giao diện'), findsOneWidget);
+  setUp(() {
+    // LocaleSettings là trạng thái TOÀN CỤC của slang. Đặt lại về tiếng Việt
+    // trước mỗi test để kết quả không phụ thuộc thứ tự chạy test.
+    LocaleSettings.setLocaleSync(AppLocale.vi);
+    registerFakeLoginBloc();
+    authBloc = mockAuthBloc(const Authenticated(testUser));
   });
 
-  testWidgets('chọn English -> toàn bộ giao diện chuyển sang tiếng Anh', (
+  tearDown(getIt.reset);
+
+  /// Mở tab Cài đặt.
+  Future<void> openSettings(WidgetTester tester) async {
+    await tester.tap(find.text('Cài đặt'));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('tab cài đặt hiển thị người dùng đang đăng nhập', (tester) async {
+    await pumpApp(tester, authBloc: authBloc);
+    await openSettings(tester);
+
+    expect(find.text('Emily Johnson'), findsOneWidget);
+    expect(find.text('emily.johnson@x.dummyjson.com'), findsOneWidget);
+  });
+
+  testWidgets('chọn English -> giao diện chuyển sang tiếng Anh', (
     tester,
   ) async {
-    await _pumpApp(tester);
+    await pumpApp(tester, authBloc: authBloc);
+    await openSettings(tester);
 
     await tester.tap(find.text('English'));
     await tester.pumpAndSettle();
 
-    expect(find.text('UI preview'), findsOneWidget);
-    expect(find.text('Xem trước giao diện'), findsNothing);
+    // Cả tiêu đề lẫn thanh điều hướng đều đổi.
+    expect(find.text('Settings'), findsWidgets);
+    expect(find.text('Products'), findsOneWidget);
   });
 
   testWidgets('chọn "Tối" -> app dùng theme tối', (tester) async {
-    await _pumpApp(tester);
+    await pumpApp(tester, authBloc: authBloc);
+    await openSettings(tester);
 
     await tester.tap(find.text('Tối'));
     await tester.pumpAndSettle();
 
-    final context = tester.element(find.byType(Scaffold));
+    final context = tester.element(find.byType(NavigationBar));
     expect(Theme.of(context).brightness, Brightness.dark);
   });
 
+  testWidgets('bấm "Đăng xuất" -> gửi AuthLogoutRequested', (tester) async {
+    await pumpApp(tester, authBloc: authBloc);
+    await openSettings(tester);
+
+    await tester.tap(find.text('Đăng xuất'));
+
+    verify(() => authBloc.add(const AuthLogoutRequested())).called(1);
+  });
+
   testWidgets('dải băng flavor: có ở staging, không có ở prod', (tester) async {
-    await _pumpApp(tester, flavor: Flavor.staging);
+    await pumpApp(tester, authBloc: authBloc, flavor: Flavor.staging);
     expect(find.byType(Banner), findsOneWidget);
 
-    await _pumpApp(tester, flavor: Flavor.prod);
+    await pumpApp(tester, authBloc: authBloc, flavor: Flavor.prod);
     expect(find.byType(Banner), findsNothing);
   });
 }

@@ -9,17 +9,23 @@
 //   2. Kiểm tra flavor native khớp với entrypoint Dart.
 //   3. Khởi tạo DI (await vì có @preResolve, vd: shared_preferences).
 //   4. Gắn bộ bắt lỗi toàn cục -> mọi lỗi chưa xử lý đều được ghi log.
-//   5. Chọn ngôn ngữ ban đầu theo máy.
-//   6. runApp, bọc app trong TranslationProvider (slang).
+//   5. Gắn BlocObserver -> mọi event/state của mọi Bloc được ghi log.
+//   6. Chọn ngôn ngữ ban đầu theo máy.
+//   7. Tạo AuthBloc toàn cục và bắt đầu khôi phục phiên.
+//   8. runApp, bọc app trong TranslationProvider (slang).
 // =============================================================================
 
+import 'package:bloc/bloc.dart';
 import 'package:core/core.dart';
+import 'package:feature_auth/feature_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:l10n/l10n.dart';
 import 'package:main_app/app.dart';
 import 'package:main_app/di/injection.dart';
+import 'package:talker/talker.dart';
+import 'package:talker_bloc_logger/talker_bloc_logger.dart';
 
 /// Khởi động app với [flavor].
 Future<void> bootstrap(Flavor flavor) async {
@@ -27,13 +33,30 @@ Future<void> bootstrap(Flavor flavor) async {
   _ensureNativeFlavorMatches(flavor);
 
   await configureDependencies(flavor);
+  final config = getIt<AppConfig>();
   _registerGlobalErrorHandlers(getIt<AppLogger>());
+
+  // BlocObserver được gọi với MỌI Bloc trong app: ghi log từng event và
+  // từng lần đổi state. Rất tiện khi debug "bấm nút xong state thành gì".
+  // Dữ liệu nhạy cảm (mật khẩu) đã được che trong toString() của event/state.
+  Bloc.observer = TalkerBlocObserver(
+    talker: getIt<Talker>(),
+    settings: TalkerBlocLoggerSettings(enabled: config.enableLogs),
+  );
 
   // Dùng ngôn ngữ của máy (vi hoặc en; ngôn ngữ khác thì dùng tiếng Việt).
   // Phase 6: ưu tiên ngôn ngữ người dùng đã chọn và lưu lại.
   LocaleSettings.useDeviceLocaleSync();
 
-  runApp(TranslationProvider(child: App(config: getIt<AppConfig>())));
+  // AuthStarted: khôi phục phiên đã lưu. Trong lúc chờ, router hiện màn
+  // chờ (trạng thái AuthUnknown).
+  final authBloc = getIt<AuthBloc>()..add(const AuthStarted());
+
+  runApp(
+    TranslationProvider(
+      child: App(config: config, authBloc: authBloc),
+    ),
+  );
 }
 
 /// Bắt lỗi chạy nhầm, vd build native `prod` nhưng code Dart là `main_dev`.

@@ -2,7 +2,8 @@
   "common": {
     "retry": "Try again",
     "cancel": "Cancel",
-    "ok": "OK"
+    "ok": "OK",
+    "loading": "Loading..."
   },
   "errors": {
     "connection": "No internet connection. Please check and try again.",
@@ -25,14 +26,28 @@
       "title": "Language",
       "vi": "Tiếng Việt",
       "en": "English"
-    }
+    },
+    "account": "Account",
+    "signOut": "Sign out"
   },
-  "preview": {
-    "title": "UI preview",
-    "environment": "Environment",
-    "components": "Sample components",
-    "primaryButton": "Primary button",
-    "secondaryButton": "Secondary button",
-    "errorExample": "Example: a network error shown in the selected language"
+  "auth": {
+    "title": "Sign in",
+    "subtitle": "Welcome back to the shop",
+    "username": "Username",
+    "password": "Password",
+    "usernameRequired": "Please enter your username",
+    "passwordRequired": "Please enter your password",
+    "submit": "Sign in",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "useDemoAccount": "Use demo account (emilys)"
+  },
+  "nav": {
+    "products": "Products",
+    "settings": "Settings"
+  },
+  "placeholder": {
+    "productsTitle": "Coming soon",
+    "productsMessage": "The product list will be built in Phase 5."
   }
 }
