@@ -22,5 +22,7 @@ analyzer:
     # Code sinh tự động: không sửa tay nên cũng không lint.
     - "**/*.g.dart"
     - "**/*.freezed.dart"
+    - "**/*.config.dart"
+    - "**/*.module.dart"
     # Output build của Flutter.
     - "**/build/**"

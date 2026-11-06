@@ -1,8 +1,6 @@
 # Kiến trúc
 
-> Bản Phase 1: quy tắc phụ thuộc và cấu trúc package. Phần luồng dữ liệu
-> chi tiết, DI, xử lý lỗi sẽ được bổ sung dần theo từng phase và hoàn thiện ở
-> Phase 8.
+> Tài liệu được bổ sung dần theo từng phase và hoàn thiện ở Phase 8.
 
 ## 1. Bản đồ repo
 
@@ -124,7 +122,55 @@ presentation layer. Tại sao phải khắt khe vậy?
 - Mọi lỗi được chuyển thành `Failure` ngay trong RepositoryImpl. Từ đó trở
   lên chỉ còn `Either<Failure, T>`, không còn `try/catch` hay `DioException`.
 
-## 6. Quy tắc được bảo vệ bằng gì?
+## 6. Dependency Injection giữa nhiều package
+
+Dùng **get_it + injectable**, mỗi package tự quản lý phần DI của mình:
+
+```
+packages/core/lib/src/di/core_di.dart
+   @InjectableInit.microPackage()      ──gen──►  CorePackageModule
+packages/features/feature_x/.../di/...
+   @InjectableInit.microPackage()      ──gen──►  FeatureXPackageModule   (Phase 4+)
+
+apps/main_app/lib/di/injection.dart
+   @InjectableInit(externalPackageModulesBefore: [
+     ExternalModule(CorePackageModule), ExternalModule(FeatureXPackageModule) ...
+   ])                                   ──gen──►  getIt.init(environment: 'dev')
+```
+
+- Class gắn `@injectable`, `@lazySingleton`... được generator tự tìm, không
+  cần đăng ký tay.
+- **Hợp đồng giữa package qua DI:** `core` khai báo interface nó cần mà không
+  tự cài đặt (`TokenRefresher`) và liệt kê trong `ignoreUnregisteredTypes`.
+  Package khác (`feature_auth`) đăng ký cài đặt. Đây là Dependency Inversion
+  ở cấp package.
+- **Flavor qua environment của injectable:** `AppConfig` có 3 cách tạo, gắn
+  `@dev`, `@staging`, `@prod`. `getIt.init(environment: flavor.name)` chỉ đăng
+  ký đúng một bản, không cần `if (flavor == ...)` ở đâu cả.
+- Codegen chạy bằng `build_runner build --workspace`: một tiến trình build cả
+  repo và tự sắp thứ tự (core sinh `CorePackageModule` trước khi main_app
+  dùng tới).
+
+## 7. Xử lý lỗi thống nhất
+
+```
+DioException / lỗi khác
+        │  mapErrorToFailure()   (core, nơi DUY NHẤT biết DioException)
+        ▼
+     Failure (sealed, shared_domain)
+        │  Either<Failure, T>     (repository → use case → Bloc)
+        ▼
+   câu thông báo theo ngôn ngữ   (l10n, Phase 3)
+```
+
+- Repository bọc mọi lời gọi bằng `guard(() => ...)`. Kết quả luôn là
+  `Either`, không exception nào lọt lên domain.
+- `Failure` là `sealed`: mọi `switch` trên Failure bắt buộc xử lý đủ mọi
+  loại. Thêm loại mới mà quên dịch thì code không compile.
+- Lỗi không ai bắt (lỗi framework, lỗi bất đồng bộ) được ghi log tập trung
+  trong `bootstrap.dart`.
+
+## 8. Quy tắc được bảo vệ bằng gì?
 
 Viết quy tắc vào tài liệu thôi thì sớm muộn sẽ có người vi phạm. Repo này
 chặn bằng 3 lớp:
@@ -140,7 +186,7 @@ chặn bằng 3 lớp:
 > vẫn import được `package:feature_product/...` dù không khai báo, và code
 > vẫn chạy. Chỉ có lint và arch_check chặn được việc này.
 
-## 7. Thêm package mới
+## 9. Thêm package mới
 
 1. Tạo package trong đúng thư mục (`packages/`, `packages/features/`...).
    Thêm `resolution: workspace` và `publish_to: none` vào pubspec.
@@ -148,6 +194,8 @@ chặn bằng 3 lớp:
 3. Nếu **không** phải feature: khai báo quy tắc trong
    `tools/arch_check/lib/src/rules.dart`, nếu không arch_check sẽ báo
    `MissingRule`. Feature mới tự động dùng quy tắc chung.
-4. Cập nhật bảng ở mục 3 của tài liệu này.
-5. Viết `README.md` cho package.
-6. Chạy `melos bootstrap && melos run analyze`.
+4. Nếu package có DI: thêm `@InjectableInit.microPackage()` rồi khai báo
+   module của nó trong `apps/main_app/lib/di/injection.dart`.
+5. Cập nhật bảng ở mục 3 của tài liệu này.
+6. Viết `README.md` cho package.
+7. Chạy `melos bootstrap && melos run analyze`.

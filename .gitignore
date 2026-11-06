@@ -29,3 +29,12 @@ coverage/
 # và tránh lộ giá trị nhạy cảm (envied sinh file chứa giá trị biến môi trường).
 *.g.dart
 *.freezed.dart
+# injectable: *.config.dart (app gốc), *.module.dart (micro package)
+*.config.dart
+*.module.dart
+
+# --- Biến môi trường của từng flavor ---
+# Chỉ commit file mẫu (*.example). File thật do `melos run env:init` tạo ra
+# (tự chạy sau `melos bootstrap`). Ở dự án thật, CI lấy giá trị từ secret.
+apps/main_app/env/.env.*
+!apps/main_app/env/.env.*.example

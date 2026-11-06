@@ -4,8 +4,7 @@ Codebase mẫu Flutter theo chuẩn team lớn: **monorepo nhiều package**, Bl
 Clean Architecture, quy trình chất lượng chặt. Mục đích chính là để học cách
 tổ chức dự án nên code có comment tiếng Việt giải thích kỹ.
 
-> README này đang ở bản Phase 1. Hướng dẫn chạy từng flavor và chạy test đầy
-> đủ sẽ được bổ sung ở các phase sau.
+> README được bổ sung dần theo từng phase, bản hoàn chỉnh ở Phase 8.
 
 ## Yêu cầu
 
@@ -26,8 +25,31 @@ export PATH="$PATH":"$HOME/.pub-cache/bin"
 melos bootstrap
 ```
 
+`melos bootstrap` tự làm thêm 2 việc ngay sau khi cài dependency:
+
+1. `melos run env:init`: tạo `apps/main_app/env/.env.<flavor>` từ file mẫu
+   `*.example` (file đã có thì giữ nguyên).
+2. `melos run gen`: sinh code (injectable, envied...). Code sinh tự động
+   không được commit.
+
 Melos cài global sẽ tự chuyển sang đúng version khai báo trong
 `pubspec.yaml` ở root, nên cả team luôn dùng chung một version.
+
+## Chạy app
+
+App có 3 flavor, mỗi flavor một entrypoint và một bundle id riêng, nên cài
+được cả 3 bản cùng lúc trên một máy:
+
+| Flavor | Lệnh (trong `apps/main_app`) | Bundle id |
+|---|---|---|
+| dev | `flutter run --flavor dev -t lib/main_dev.dart` | `com.example.shopsample.dev` |
+| staging | `flutter run --flavor staging -t lib/main_staging.dart` | `com.example.shopsample.stg` |
+| prod | `flutter run --flavor prod -t lib/main_prod.dart` | `com.example.shopsample` |
+
+Với VS Code: tab **Run and Debug**, chọn `main_app (dev)`...
+
+`--flavor` và `-t` phải khớp nhau. Nếu chạy nhầm (vd `--flavor prod` với
+`main_dev.dart`), app sẽ báo lỗi ngay khi khởi động.
 
 ## Script thường dùng
 
@@ -38,7 +60,9 @@ Melos cài global sẽ tự chuyển sang đúng version khai báo trong
 | `melos run test` | Chạy test mọi package (`dart test` / `flutter test`) |
 | `melos run format` | Format toàn bộ code |
 | `melos run format:check` | Kiểm tra format, dùng trong CI |
-| `melos run gen` | Sinh code (build_runner) cho mọi package dùng codegen |
+| `melos run gen` | Sinh code (build_runner `--workspace`) cho toàn repo |
+| `melos run gen:watch` | Như `gen` nhưng tự sinh lại khi sửa code |
+| `melos run env:init` | Tạo file `.env` của từng flavor từ file mẫu |
 | `melos run check:arch` | Chỉ kiểm tra quy tắc kiến trúc |
 | `melos run clean` | Xoá `build/`, `.dart_tool/` của các package |
 | `melos list --graph` | Xem đồ thị phụ thuộc giữa các package |
@@ -53,7 +77,7 @@ giữa package và cách các quy tắc được bảo vệ.
 ## Lộ trình
 
 - [x] Phase 1: Khởi tạo monorepo, lint, script melos, kiểm tra kiến trúc
-- [ ] Phase 2: `core` (config/flavor, logger, Failure, network, storage) + DI nền
+- [x] Phase 2: `core` (config/flavor, logger, Failure, network, storage) + DI nền
 - [ ] Phase 3: `design_system` + `l10n` + theme
 - [ ] Phase 4: `feature_auth` + router có guard
 - [ ] Phase 5: `feature_product`

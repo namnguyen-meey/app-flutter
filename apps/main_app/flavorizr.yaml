@@ -1,0 +1,64 @@
+# =============================================================================
+# flavorizr.yaml: cấu hình flavor cho phần NATIVE (Android, iOS) của main_app.
+#
+# flutter_flavorizr đọc file này rồi sửa project native: productFlavors cho
+# Android, build configuration + scheme cho iOS, tên app và bundle id riêng
+# cho từng flavor. Nhờ vậy cài được dev, staging, prod CÙNG LÚC trên một máy.
+#
+# Chạy lại khi thêm/sửa flavor (đứng trong apps/main_app):
+#   dart run flutter_flavorizr -f
+#
+# Phần Dart của flavor (main_dev.dart, AppConfig...) do ta tự viết, KHÔNG để
+# flavorizr sinh. Bản 2.x của flavorizr chỉ sinh một main.dart dùng chung,
+# trong khi repo này dùng mỗi flavor một entrypoint.
+# =============================================================================
+
+app:
+  android:
+    flavorDimensions: "environment"
+
+# Chỉ chạy các bước cần thiết. Cố ý bỏ qua:
+#   - flutter:* : tự viết code Dart (xem comment ở trên).
+#   - ios:podfile : project iOS dùng Swift Package Manager, không có Podfile.
+#   - ide:config : bản này ghi cứng `lib/main.dart`. Cấu hình chạy cho VS Code
+#                  nằm ở .vscode/launch.json ở root repo.
+#   - *:icons, google:firebase... : chưa dùng.
+instructions:
+  - assets:download
+  - assets:extract
+  - android:androidManifest
+  - android:flavorizrGradle
+  - android:buildGradle
+  - android:dummyAssets
+  - ios:xcconfig
+  - ios:buildTargets
+  - ios:schema
+  - ios:dummyAssets
+  - ios:plist
+  - ios:launchScreen
+  - assets:clean
+
+flavors:
+  dev:
+    app:
+      name: "Shop Dev"
+    android:
+      applicationId: "com.example.shopsample.dev"
+    ios:
+      bundleId: "com.example.shopsample.dev"
+
+  staging:
+    app:
+      name: "Shop Staging"
+    android:
+      applicationId: "com.example.shopsample.stg"
+    ios:
+      bundleId: "com.example.shopsample.stg"
+
+  prod:
+    app:
+      name: "Shop"
+    android:
+      applicationId: "com.example.shopsample"
+    ios:
+      bundleId: "com.example.shopsample"
