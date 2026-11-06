@@ -45,6 +45,13 @@ class Task {
     );
   }
 
+  /// Whether [id] has the format produced by [Task.create]: digits only.
+  ///
+  /// The router uses it to reject URLs like `/tasks/abc` early.
+  static bool isValidId(String id) => _idPattern.hasMatch(id);
+
+  static final RegExp _idPattern = RegExp(r'^\d+$');
+
   /// Creates a task from a map produced by [toJson].
   factory Task.fromJson(Map<String, dynamic> json) {
     final String? dueDate = json['dueDate'] as String?;

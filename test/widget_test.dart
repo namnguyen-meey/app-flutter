@@ -1,68 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:my_flutter_app/app.dart';
-import 'package:my_flutter_app/models/task.dart';
-import 'package:my_flutter_app/widgets/task_statistics.dart';
 
 import 'helpers/fake_task_storage_service.dart';
-
-/// Starts the app with a fake storage on a small phone screen
-/// (iPhone SE size) and waits until the tasks are loaded.
-Future<FakeTaskStorageService> pumpTodoApp(
-  WidgetTester tester, {
-  List<Task> tasks = const [],
-  bool failOnLoad = false,
-}) async {
-  tester.view.physicalSize = const Size(750, 1334);
-  tester.view.devicePixelRatio = 2;
-  addTearDown(tester.view.reset);
-
-  final FakeTaskStorageService storage = FakeTaskStorageService(
-    initialTasks: tasks,
-    failOnLoad: failOnLoad,
-  );
-  await tester.pumpWidget(TodoApp(storage: storage));
-  await tester.pumpAndSettle();
-  return storage;
-}
-
-Task buildTask(
-  String title, {
-  bool isCompleted = false,
-  DateTime? dueDate,
-  String? id,
-}) {
-  return Task(
-    id: id ?? title,
-    title: title,
-    isCompleted: isCompleted,
-    dueDate: dueDate,
-    createdAt: DateTime(2026, 10, 29, 9),
-  );
-}
-
-/// Finds a number inside the statistics area.
-Finder statisticValue(String value) {
-  return find.descendant(
-    of: find.byType(TaskStatistics),
-    matching: find.text(value),
-  );
-}
-
-Future<void> tapAndSettle(WidgetTester tester, Finder finder) async {
-  await tester.ensureVisible(finder);
-  await tester.pumpAndSettle();
-  await tester.tap(finder);
-  await tester.pumpAndSettle();
-}
-
-/// Taps a tab in the bottom navigation bar.
-Future<void> openTab(WidgetTester tester, String label) async {
-  await tapAndSettle(
-    tester,
-    find.descendant(of: find.byType(NavigationBar), matching: find.text(label)),
-  );
-}
+import 'helpers/test_app.dart';
 
 void main() {
   testWidgets('shows a friendly message when there are no tasks', (
@@ -97,20 +37,22 @@ void main() {
     expect(storage.saveCount, 0);
   });
 
-  testWidgets('edits an existing task', (tester) async {
+  testWidgets('edits an existing task from its detail page', (tester) async {
     final FakeTaskStorageService storage = await pumpTodoApp(
       tester,
-      tasks: [buildTask('Mua sữa', id: 'task-1')],
+      tasks: [buildTask('Mua sữa', id: '101')],
     );
 
     await tapAndSettle(tester, find.text('Mua sữa'));
-    expect(find.text('Sửa công việc'), findsOneWidget);
+    await tapAndSettle(tester, find.byTooltip('Sửa công việc'));
+    expect(find.text('Sửa công việc'), findsOneWidget); // form title
 
     await tester.enterText(find.byType(TextFormField).first, 'Mua sữa tươi');
     await tapAndSettle(tester, find.text('Lưu thay đổi'));
 
+    expect(find.text('Chi tiết công việc'), findsOneWidget);
     expect(find.text('Mua sữa tươi'), findsOneWidget);
-    expect(storage.savedTasks.single.id, 'task-1');
+    expect(storage.savedTasks.single.id, '101');
     expect(storage.savedTasks.single.title, 'Mua sữa tươi');
   });
 
@@ -239,7 +181,7 @@ void main() {
 
     expect(find.text('Không thể tải công việc'), findsOneWidget);
     expect(find.text('Thử lại'), findsOneWidget);
-    // Adding is disabled so we never overwrite data we could not read.
+    // Adding is impossible so we never overwrite data we could not read.
     expect(find.text('Thêm việc'), findsNothing);
   });
 }

@@ -23,7 +23,15 @@ void main() {
     await tester.tap(find.text('Thêm việc'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField).first, title);
-    await tester.tap(find.text('Lưu công việc'));
+    // On a real phone the keyboard covers the bottom of the form, so the
+    // save button can be out of view. The first Scrollable is the form.
+    final Finder saveButton = find.text('Lưu công việc');
+    await tester.scrollUntilVisible(
+      saveButton,
+      100,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(saveButton);
     await tester.pumpAndSettle();
     expect(find.text(title), findsOneWidget);
 

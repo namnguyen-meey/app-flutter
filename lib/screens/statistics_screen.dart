@@ -1,21 +1,36 @@
 import 'package:flutter/material.dart';
 
+import '../controllers/task_controller.dart';
+import '../core/router/app_navigation.dart';
 import '../models/task.dart';
+import '../models/task_filter.dart';
 import '../models/task_summary.dart';
 import '../theme/app_colors.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/screen_header.dart';
 import '../widgets/task_statistics.dart';
 
-/// The "Thống kê" tab: overall progress, unfinished tasks by deadline and
-/// progress for each priority.
-class StatisticsTab extends StatelessWidget {
-  const StatisticsTab({super.key, required this.summary});
+/// The "Thống kê" tab (`/statistics`): overall progress, unfinished tasks by
+/// deadline and progress for each priority.
+class StatisticsScreen extends StatelessWidget {
+  const StatisticsScreen({super.key, required this.controller});
 
-  final TaskSummary summary;
+  final TaskController controller;
 
   @override
   Widget build(BuildContext context) {
+    return SafeArea(
+      bottom: false,
+      // Rebuilds when the tasks change, e.g. after a task is ticked on the
+      // tasks tab: both tabs read the same controller.
+      child: ListenableBuilder(
+        listenable: controller,
+        builder: (context, _) => _buildContent(controller.summary),
+      ),
+    );
+  }
+
+  Widget _buildContent(TaskSummary summary) {
     return CustomScrollView(
       slivers: [
         const SliverPadding(
@@ -115,6 +130,15 @@ class _ProgressCard extends StatelessWidget {
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
+            if (summary.remaining > 0) ...[
+              const SizedBox(height: 8),
+              TextButton.icon(
+                // Switches to the tasks tab with `?filter=active` in the URL.
+                onPressed: () => context.goToTasks(filter: TaskFilter.active),
+                icon: const Icon(Icons.arrow_forward_rounded),
+                label: Text('Xem ${summary.remaining} việc chưa xong'),
+              ),
+            ],
           ],
         ),
       ),

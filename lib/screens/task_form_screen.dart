@@ -4,15 +4,28 @@ import '../models/task.dart';
 import '../theme/app_colors.dart';
 import '../utils/date_formatter.dart';
 
-/// Screen used both to create a new task and to edit an existing one.
+/// The form used both to create a new task and to edit an existing one.
 ///
-/// When the user saves, the screen closes and returns the resulting [Task]
-/// to the previous screen with `Navigator.pop(task)`.
+/// It does not save or navigate by itself: it hands the resulting [Task]
+/// to [onSaved]. CreateTaskScreen and EditTaskScreen decide what happens
+/// next, so this form works the same wherever it is opened from.
 class TaskFormScreen extends StatefulWidget {
-  const TaskFormScreen({super.key, this.initialTask});
+  const TaskFormScreen({
+    super.key,
+    this.initialTask,
+    this.template,
+    required this.onSaved,
+  });
 
   /// The task being edited, or `null` when creating a new task.
   final Task? initialTask;
+
+  /// When creating, a task whose values pre-fill the form (used to
+  /// duplicate a task). The saved task still gets a new id.
+  final Task? template;
+
+  /// Called with the new or updated task when the user taps save.
+  final ValueChanged<Task> onSaved;
 
   @override
   State<TaskFormScreen> createState() => _TaskFormScreenState();
@@ -30,8 +43,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   @override
   void initState() {
     super.initState();
-    // Pre-fill the fields when editing.
-    final Task? task = widget.initialTask;
+    // Pre-fill the fields when editing or duplicating.
+    final Task? task = widget.initialTask ?? widget.template;
     _titleController = TextEditingController(text: task?.title ?? '');
     _descriptionController = TextEditingController(
       text: task?.description ?? '',
@@ -108,7 +121,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
             clearDueDate: _dueDate == null,
           );
 
-    Navigator.of(context).pop(result);
+    widget.onSaved(result);
   }
 
   @override
