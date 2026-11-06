@@ -1,0 +1,38 @@
+{
+  "common": {
+    "retry": "Thử lại",
+    "cancel": "Huỷ",
+    "ok": "Đồng ý"
+  },
+  "errors": {
+    "connection": "Không có kết nối mạng. Vui lòng kiểm tra và thử lại.",
+    "timeout": "Máy chủ phản hồi quá lâu. Vui lòng thử lại.",
+    "unauthorized": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+    "invalidCredentials": "Sai tên đăng nhập hoặc mật khẩu.",
+    "notFound": "Không tìm thấy dữ liệu.",
+    "server": "Máy chủ đang gặp sự cố. Vui lòng thử lại sau.",
+    "cache": "Không đọc được dữ liệu đã lưu trên máy.",
+    "unknown": "Đã có lỗi xảy ra. Vui lòng thử lại."
+  },
+  "settings": {
+    "theme": {
+      "title": "Giao diện",
+      "system": "Hệ thống",
+      "light": "Sáng",
+      "dark": "Tối"
+    },
+    "language": {
+      "title": "Ngôn ngữ",
+      "vi": "Tiếng Việt",
+      "en": "English"
+    }
+  },
+  "preview": {
+    "title": "Xem trước giao diện",
+    "environment": "Môi trường",
+    "components": "Component mẫu",
+    "primaryButton": "Nút chính",
+    "secondaryButton": "Nút phụ",
+    "errorExample": "Ví dụ: lỗi mất mạng hiển thị theo ngôn ngữ đang chọn"
+  }
+}

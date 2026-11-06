@@ -78,7 +78,7 @@ giữa package và cách các quy tắc được bảo vệ.
 
 - [x] Phase 1: Khởi tạo monorepo, lint, script melos, kiểm tra kiến trúc
 - [x] Phase 2: `core` (config/flavor, logger, Failure, network, storage) + DI nền
-- [ ] Phase 3: `design_system` + `l10n` + theme
+- [x] Phase 3: `design_system` + `l10n` + theme
 - [ ] Phase 4: `feature_auth` + router có guard
 - [ ] Phase 5: `feature_product`
 - [ ] Phase 6: `feature_settings`

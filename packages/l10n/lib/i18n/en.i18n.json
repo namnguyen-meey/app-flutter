@@ -1,0 +1,38 @@
+{
+  "common": {
+    "retry": "Try again",
+    "cancel": "Cancel",
+    "ok": "OK"
+  },
+  "errors": {
+    "connection": "No internet connection. Please check and try again.",
+    "timeout": "The server took too long to respond. Please try again.",
+    "unauthorized": "Your session has expired. Please sign in again.",
+    "invalidCredentials": "Incorrect username or password.",
+    "notFound": "The requested data could not be found.",
+    "server": "The server is having problems. Please try again later.",
+    "cache": "Could not read data saved on this device.",
+    "unknown": "Something went wrong. Please try again."
+  },
+  "settings": {
+    "theme": {
+      "title": "Appearance",
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "language": {
+      "title": "Language",
+      "vi": "Tiếng Việt",
+      "en": "English"
+    }
+  },
+  "preview": {
+    "title": "UI preview",
+    "environment": "Environment",
+    "components": "Sample components",
+    "primaryButton": "Primary button",
+    "secondaryButton": "Secondary button",
+    "errorExample": "Example: a network error shown in the selected language"
+  }
+}

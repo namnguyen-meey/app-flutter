@@ -4,5 +4,19 @@
 /// `widgetbook_app`. Không phụ thuộc package nội bộ nào: component nhận
 /// chuỗi hiển thị qua tham số thay vì tự gọi l10n.
 ///
-/// Phase 3 sẽ bổ sung: token màu/chữ/khoảng cách, theme sáng/tối, component.
+/// Cố ý KHÔNG export `AppPalette` và `AppTypography`: bên ngoài phải đọc màu,
+/// chữ qua Theme (`context.colorScheme`, `context.appColors`,
+/// `context.textTheme`) để tự đổi theo chế độ sáng/tối.
 library;
+
+export 'src/components/app_button.dart';
+export 'src/components/app_empty_view.dart';
+export 'src/components/app_error_view.dart';
+export 'src/components/app_loading.dart';
+export 'src/components/app_network_image.dart';
+export 'src/components/app_text_field.dart';
+export 'src/components/product_card.dart';
+export 'src/theme/app_colors.dart';
+export 'src/theme/app_theme.dart';
+export 'src/theme/theme_context.dart';
+export 'src/tokens/app_spacing.dart';

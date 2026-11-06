@@ -6,7 +6,7 @@
 // design_system kèm "use case" để xem và chỉnh tham số trực tiếp.
 // =============================================================================
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Điểm vào của catalog UI.
 void main() => runApp(const WidgetbookApp());

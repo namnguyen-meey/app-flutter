@@ -11,9 +11,19 @@ environment:
   sdk: ^3.13.0
 
 dependencies:
+  cached_network_image: ^4.0.6
   flutter:
     sdk: flutter
+  flutter_svg: ^2.3.2
+  material_ui: ^1.10.0
+  skeletonizer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter:
+  # Asset của package được app truy cập qua `package: 'design_system'`
+  # (xem AppEmptyView). App KHÔNG cần khai báo lại asset này.
+  assets:
+    - assets/illustrations/

@@ -170,7 +170,31 @@ DioException / lỗi khác
 - Lỗi không ai bắt (lỗi framework, lỗi bất đồng bộ) được ghi log tập trung
   trong `bootstrap.dart`.
 
-## 8. Quy tắc được bảo vệ bằng gì?
+## 8. Material: dùng `material_ui`, không dùng `flutter/material.dart`
+
+Thư viện Material đã được tách khỏi Flutter framework thành package riêng
+**`material_ui`** (Cupertino tương tự với `cupertino_ui`). Repo này import:
+
+```dart
+import 'package:material_ui/material_ui.dart';   // ĐÚNG
+import 'package:flutter/material.dart';          // KHÔNG dùng
+```
+
+- `ThemeData`, `MaterialApp`... của hai thư viện là **các class khác nhau**.
+  Dùng lẫn thì widget dùng bản này không thấy theme do bản kia cung cấp.
+- Các package chủ chốt đã chuyển: `go_router`, `cached_network_image`.
+  `skeletonizer`, `flutter_svg`, `flutter_bloc` không phụ thuộc Material
+  nên dùng với bản nào cũng được.
+- Package nào **còn** dùng bản cũ (`flutter/material.dart`) thì bọc riêng
+  widget của nó trong `MaterialUiCompatibilityBridge`. Class này đã được đánh
+  dấu `@Deprecated` vì chỉ là công cụ tạm trong lúc hệ sinh thái chuyển đổi,
+  nên chỉ dùng đúng chỗ cần và ghi rõ lý do.
+- Bản dịch cho widget Material/Cupertino (`GlobalMaterialLocalizations`) cũng
+  lấy từ `material_ui`, không phải từ `flutter_localizations`.
+
+Chuyển code cũ: `dart fix --apply --code=migrate_design_widgets`.
+
+## 9. Quy tắc được bảo vệ bằng gì?
 
 Viết quy tắc vào tài liệu thôi thì sớm muộn sẽ có người vi phạm. Repo này
 chặn bằng 3 lớp:
@@ -186,7 +210,7 @@ chặn bằng 3 lớp:
 > vẫn import được `package:feature_product/...` dù không khai báo, và code
 > vẫn chạy. Chỉ có lint và arch_check chặn được việc này.
 
-## 9. Thêm package mới
+## 10. Thêm package mới
 
 1. Tạo package trong đúng thư mục (`packages/`, `packages/features/`...).
    Thêm `resolution: workspace` và `publish_to: none` vào pubspec.
