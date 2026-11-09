@@ -81,7 +81,10 @@ void _ensureNativeFlavorMatches(Flavor flavor) {
   }
 }
 
-/// Ghi log mọi lỗi không ai bắt. Phase 8: đây là chỗ gửi lỗi lên Sentry.
+/// Ghi log mọi lỗi không ai bắt.
+///
+/// Muốn gửi lỗi lên Sentry/Crashlytics thì nối vào đây, xem
+/// docs/OBSERVABILITY.md (mục 3, bước 5 và mục 4, bước 4).
 void _registerGlobalErrorHandlers(AppLogger logger) {
   // Lỗi bên trong framework Flutter (build, layout, paint...). Giữ lại handler
   // mặc định để vẫn thấy màn hình đỏ và log chi tiết khi debug.

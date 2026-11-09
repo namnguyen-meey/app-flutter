@@ -7,7 +7,7 @@
 // datasource của các feature (qua annotation `@Extra` của retrofit).
 //
 // dio cho phép gắn dữ liệu tuỳ ý vào `RequestOptions.extra`. Dữ liệu này
-// KHÔNG gửi lên server, chỉ để các interceptor đọc. Ví dụ ở Phase 4:
+// KHÔNG gửi lên server, chỉ để các interceptor đọc. Ví dụ trong feature_auth:
 //
 //   @POST('/auth/login')
 //   @Extra({NetworkExtras.skipAuth: true, NetworkExtras.sensitive: true})

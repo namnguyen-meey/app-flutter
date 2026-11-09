@@ -2,7 +2,7 @@
 // product_card.dart: thẻ sản phẩm trong danh sách dạng lưới.
 //
 // Thuộc: design_system/components.
-// Được dùng bởi: feature_product (màn danh sách, Phase 5).
+// Được dùng bởi: feature_product (màn danh sách).
 //
 // design_system KHÔNG biết entity Product. Thẻ chỉ nhận dữ liệu đã sẵn sàng
 // để hiển thị (chuỗi giá đã định dạng theo ngôn ngữ...). Feature chịu trách

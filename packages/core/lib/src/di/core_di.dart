@@ -35,7 +35,7 @@ import 'package:talker/talker.dart';
   // Liệt kê ở đây để generator không cảnh báo "thiếu dependency", đồng thời
   // ghi rõ hợp đồng của core với bên ngoài:
   //   - AppConfig: main_app đăng ký theo flavor.
-  //   - TokenRefresher: feature_auth đăng ký (Phase 4).
+  //   - TokenRefresher: feature_auth đăng ký.
   ignoreUnregisteredTypes: [AppConfig, TokenRefresher],
 )
 void initCoreMicroPackage() {}

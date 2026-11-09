@@ -1,6 +1,8 @@
 # Kiến trúc
 
-> Tài liệu được bổ sung dần theo từng phase và hoàn thiện ở Phase 8.
+> Tài liệu liên quan: [LEARNING_PATH](LEARNING_PATH.md) (đọc repo theo thứ
+> tự nào), [PACKAGES](PACKAGES.md), [BLOC_GUIDE](BLOC_GUIDE.md),
+> [CONTRIBUTING](CONTRIBUTING.md), [OBSERVABILITY](OBSERVABILITY.md).
 
 ## 1. Bản đồ repo
 
@@ -137,7 +139,7 @@ Dùng **get_it + injectable**, mỗi package tự quản lý phần DI của mì
 packages/core/lib/src/di/core_di.dart
    @InjectableInit.microPackage()      ──gen──►  CorePackageModule
 packages/features/feature_x/.../di/...
-   @InjectableInit.microPackage()      ──gen──►  FeatureXPackageModule   (Phase 4+)
+   @InjectableInit.microPackage()      ──gen──►  FeatureXPackageModule
 
 apps/main_app/lib/di/injection.dart
    @InjectableInit(externalPackageModulesBefore: [
@@ -181,7 +183,7 @@ DioException / lỗi khác
      Failure (sealed, shared_domain)
         │  Either<Failure, T>     (repository → use case → Bloc)
         ▼
-   câu thông báo theo ngôn ngữ   (l10n, Phase 3)
+   câu thông báo theo ngôn ngữ   (l10n)
 ```
 
 - Repository bọc mọi lời gọi bằng `guard(() => ...)`. Kết quả luôn là

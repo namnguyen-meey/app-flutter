@@ -3,7 +3,7 @@
 //
 // Thuộc: core/session (tầng nền tảng).
 // Được PHÁT bởi: AuthInterceptor khi không làm mới được token.
-// Được NGHE bởi: feature_auth (Phase 4) để chuyển trạng thái sang "chưa
+// Được NGHE bởi: feature_auth để chuyển trạng thái sang "chưa
 // đăng nhập", từ đó router tự đưa người dùng về màn đăng nhập.
 //
 // Tại sao cần kênh này? Interceptor nằm sâu trong tầng mạng, không được (và

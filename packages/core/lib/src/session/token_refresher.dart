@@ -3,7 +3,7 @@
 // cài đặt.
 //
 // Thuộc: core/session (tầng nền tảng).
-// Được cài đặt bởi: feature_auth (Phase 4), gọi API `POST /auth/refresh`.
+// Được cài đặt bởi: feature_auth, gọi API `POST /auth/refresh`.
 // Được gọi bởi: AuthInterceptor khi request bị 401.
 //
 // Tại sao không để core tự gọi `/auth/refresh`?

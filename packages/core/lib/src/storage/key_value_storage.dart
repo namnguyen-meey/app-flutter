@@ -2,7 +2,7 @@
 // key_value_storage.dart: lưu cài đặt đơn giản dạng khoá - giá trị.
 //
 // Thuộc: core/storage (tầng nền tảng).
-// Được dùng bởi: feature_settings (Phase 6) để nhớ theme và ngôn ngữ.
+// Được dùng bởi: feature_settings để nhớ theme và ngôn ngữ.
 //
 // KHÔNG dùng cho dữ liệu nhạy cảm (token, mật khẩu): dùng TokenStorage.
 // =============================================================================

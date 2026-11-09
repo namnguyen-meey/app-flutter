@@ -2,9 +2,35 @@
 
 Codebase mẫu Flutter theo chuẩn team lớn: **monorepo nhiều package**, Bloc,
 Clean Architecture, quy trình chất lượng chặt. Mục đích chính là để học cách
-tổ chức dự án nên code có comment tiếng Việt giải thích kỹ.
+tổ chức dự án nên code có comment tiếng Việt giải thích kỹ, cả "làm gì" lẫn
+"tại sao".
 
-> README được bổ sung dần theo từng phase, bản hoàn chỉnh ở Phase 8.
+**App làm gì?** Một app bán hàng nhỏ dùng API công khai
+[dummyjson](https://dummyjson.com):
+
+- **Đăng nhập**: token lưu an toàn, tự làm mới token khi hết hạn, giữ phiên
+  khi mở lại app.
+- **Sản phẩm**: danh sách phân trang, kéo để làm mới, khung xương khi tải,
+  tìm kiếm có debounce, cache offline, màn chi tiết.
+- **Cài đặt**: theme sáng/tối, tiếng Việt/tiếng Anh (được lưu lại), đăng xuất.
+
+**Công nghệ chính:** melos + Pub Workspaces, flutter_bloc, go_router,
+get_it + injectable, dio + retrofit, freezed, fpdart, drift, slang,
+widgetbook, alchemist, GitHub Actions. Lý do chọn từng thư viện:
+[docs/PACKAGES.md](docs/PACKAGES.md).
+
+## Tài liệu
+
+| Tài liệu | Nội dung |
+|---|---|
+| [docs/LEARNING_PATH.md](docs/LEARNING_PATH.md) | **Bắt đầu từ đây**: đọc repo theo thứ tự nào, câu hỏi tự kiểm tra, bài tập |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Các tầng, quy tắc phụ thuộc, DI, xử lý lỗi, router, cách quy tắc được bảo vệ |
+| [docs/PACKAGES.md](docs/PACKAGES.md) | Package nội bộ, thư viện bên ngoài: vai trò, lựa chọn thay thế |
+| [docs/BLOC_GUIDE.md](docs/BLOC_GUIDE.md) | Bloc hay Cubit, đặt tên event, thiết kế state, transformer, test |
+| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Quy trình nhánh, commit, PR, review, quy tắc code |
+| [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) | (Tuỳ chọn) Sentry / Crashlytics, Remote Config |
+
+Mỗi package còn có `README.md` riêng mô tả vai trò và cách dùng.
 
 ## Yêu cầu
 
@@ -105,8 +131,42 @@ Integration test không chạy trên CI (cần simulator). Golden test fail thì
 
 ## Cấu trúc
 
-Xem [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): các tầng, quy tắc phụ thuộc
-giữa package và cách các quy tắc được bảo vệ.
+```
+apps/
+├── main_app/            # app chính: bootstrap, DI gốc, router, flavor
+└── widgetbook_app/      # catalog UI của design system
+packages/
+├── shared_domain/       # Failure, UseCase, User, AuthSession (Dart thuần)
+├── core/                # config, logger, network, storage, DI nền
+├── design_system/       # theme, token, component dùng chung
+├── l10n/                # bản dịch vi/en
+└── features/
+    ├── feature_auth/      # mỗi feature: lib/src/{data,domain,presentation,di}
+    ├── feature_product/
+    └── feature_settings/
+tools/arch_check/        # kiểm tra quy tắc phụ thuộc giữa package
+docs/                    # tài liệu (bảng ở trên)
+.github/                 # CI, mẫu Pull Request
+```
+
+Các tầng, quy tắc phụ thuộc giữa package và cách các quy tắc được bảo vệ:
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Xử lý sự cố
+
+| Triệu chứng | Cách xử lý |
+|---|---|
+| `melos: command not found` | Thêm `~/.pub-cache/bin` vào `PATH` (xem phần Cài đặt) |
+| Lỗi thiếu file `*.g.dart`, `*.config.dart`... sau khi pull | `melos bootstrap` (cài dependency và sinh lại code) |
+| Thiếu file `env/.env.<flavor>` | `melos run env:init` |
+| App báo flavor native không khớp entrypoint | `--flavor` và `-t lib/main_<flavor>.dart` phải cùng một flavor |
+| Golden test fail sau khi đổi theme | Đổi có chủ ý thì tạo lại ảnh (README của `design_system`) |
+| Lỗi build lạ, không rõ nguyên nhân | `melos run clean && melos bootstrap` |
+
+> **Nền tảng đã kiểm chứng:** app được chạy thử và chạy integration test
+> trên **iOS simulator**. Flavor Android đã được cấu hình (flutter_flavorizr)
+> nhưng chưa được chạy thử trên máy tác giả. Unit, widget và golden test chạy
+> trên macOS và Linux (CI). Hãy chạy thử Android trước khi dựa vào nó.
 
 ## Lộ trình
 
@@ -117,4 +177,4 @@ giữa package và cách các quy tắc được bảo vệ.
 - [x] Phase 5: `feature_product`
 - [x] Phase 6: `feature_settings`
 - [x] Phase 7: Widgetbook, golden test, integration test, GitHub Actions
-- [ ] Phase 8: Tài liệu hoàn chỉnh
+- [x] Phase 8: Tài liệu hoàn chỉnh (LEARNING_PATH, PACKAGES, BLOC_GUIDE, CONTRIBUTING, OBSERVABILITY)

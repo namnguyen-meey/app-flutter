@@ -6,7 +6,7 @@
 //
 // Tại sao cần lưu user? Khi mở app mà mất mạng, không gọi được `/auth/me`
 // nhưng token vẫn còn. Có sẵn user đã lưu thì người dùng vẫn vào được app
-// (xem sản phẩm đã cache ở Phase 5) thay vì bị đá ra màn đăng nhập.
+// (xem sản phẩm đã cache) thay vì bị đá ra màn đăng nhập.
 //
 // Lưu trong secure storage (Keychain/Keystore) vì email, họ tên là dữ liệu
 // cá nhân.

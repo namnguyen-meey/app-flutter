@@ -5,7 +5,7 @@
 // Được CÀI ĐẶT bởi: feature_auth (AuthRepositoryImpl).
 // Được DÙNG bởi:
 //   - feature_auth: AuthBloc nghe trạng thái để router chuyển màn.
-//   - feature_settings (Phase 6): hiển thị người dùng, đăng xuất.
+//   - feature_settings: hiển thị người dùng, đăng xuất.
 //
 // Đây là ví dụ cụ thể cho quy tắc "feature không import nhau, giao tiếp qua
 // shared_domain": feature_settings đăng xuất được mà không cần biết
