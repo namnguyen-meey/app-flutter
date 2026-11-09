@@ -73,9 +73,16 @@ hai đường:
 1. **Interface trong `shared_domain`.** Ví dụ `feature_settings` cần đăng
    xuất: `shared_domain` khai báo interface `AuthSession`, `feature_auth` cài
    đặt và đăng ký vào DI, `feature_settings` chỉ biết tới interface.
+   Code: `feature_settings/.../presentation/account_cubit.dart` (dùng) và
+   `feature_auth/.../di/auth_di.dart` (đăng ký cài đặt).
 2. **Router ở `main_app`.** Ví dụ đăng nhập xong thì vào danh sách sản phẩm:
    `feature_auth` không biết màn sản phẩm tồn tại. Router ở `main_app` nghe
-   trạng thái đăng nhập rồi tự chuyển màn.
+   trạng thái đăng nhập rồi tự chuyển màn. Tương tự, màn danh sách sản phẩm
+   chỉ gọi callback `onProductTap(id)`, router quyết định mở màn nào.
+   Code: `apps/main_app/lib/router/app_router.dart`.
+3. **State toàn cục do app cung cấp.** `SettingsCubit` (feature_settings) quyết
+   định theme/ngôn ngữ; `App` (main_app) đọc nó để cấu hình `MaterialApp` và
+   slang. Feature khác chỉ thấy kết quả qua `Theme.of(context)`/`context.t`.
 
 ## 4. Domain layer phải "sạch"
 

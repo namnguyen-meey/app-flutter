@@ -10,7 +10,7 @@
 //   3. Khởi tạo DI (await vì có @preResolve, vd: shared_preferences).
 //   4. Gắn bộ bắt lỗi toàn cục -> mọi lỗi chưa xử lý đều được ghi log.
 //   5. Gắn BlocObserver -> mọi event/state của mọi Bloc được ghi log.
-//   6. Chọn ngôn ngữ ban đầu theo máy.
+//   6. Đọc cài đặt đã lưu, áp dụng ngôn ngữ TRƯỚC khi dựng giao diện.
 //   7. Tạo AuthBloc toàn cục và bắt đầu khôi phục phiên.
 //   8. runApp, bọc app trong TranslationProvider (slang).
 // =============================================================================
@@ -18,6 +18,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:core/core.dart';
 import 'package:feature_auth/feature_auth.dart';
+import 'package:feature_settings/feature_settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -44,9 +45,12 @@ Future<void> bootstrap(Flavor flavor) async {
     settings: TalkerBlocLoggerSettings(enabled: config.enableLogs),
   );
 
-  // Dùng ngôn ngữ của máy (vi hoặc en; ngôn ngữ khác thì dùng tiếng Việt).
-  // Phase 6: ưu tiên ngôn ngữ người dùng đã chọn và lưu lại.
-  LocaleSettings.useDeviceLocaleSync();
+  // SettingsCubit đọc cài đặt đã lưu (đồng bộ, vì shared_preferences đã được
+  // nạp sẵn lúc khởi tạo DI). Áp dụng ngôn ngữ NGAY, trước runApp, để màn
+  // hình đầu tiên đã đúng ngôn ngữ. Sau đó App tự áp dụng mỗi khi người dùng
+  // đổi (BlocListener trong app.dart).
+  final settingsCubit = getIt<SettingsCubit>();
+  applyLanguagePreference(settingsCubit.state.language);
 
   // AuthStarted: khôi phục phiên đã lưu. Trong lúc chờ, router hiện màn
   // chờ (trạng thái AuthUnknown).
@@ -54,7 +58,11 @@ Future<void> bootstrap(Flavor flavor) async {
 
   runApp(
     TranslationProvider(
-      child: App(config: config, authBloc: authBloc),
+      child: App(
+        config: config,
+        authBloc: authBloc,
+        settingsCubit: settingsCubit,
+      ),
     ),
   );
 }

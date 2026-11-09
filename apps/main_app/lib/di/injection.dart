@@ -7,13 +7,13 @@
 //
 // Đây là nơi DUY NHẤT gom DI của mọi package. Mỗi package tự khai báo phần
 // của mình (micro package); app chỉ liệt kê module của từng package ở đây.
-// Phase 4-6 sẽ thêm module của feature_auth, feature_product,
-// feature_settings vào danh sách.
+// Thêm feature mới thì thêm module của nó vào `externalPackageModulesBefore`.
 // =============================================================================
 
 import 'package:core/core.dart';
 import 'package:feature_auth/feature_auth.dart';
 import 'package:feature_product/feature_product.dart';
+import 'package:feature_settings/feature_settings.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:main_app/di/injection.config.dart';
@@ -32,6 +32,7 @@ final GetIt getIt = GetIt.instance;
     ExternalModule(CorePackageModule),
     ExternalModule(FeatureAuthPackageModule),
     ExternalModule(FeatureProductPackageModule),
+    ExternalModule(FeatureSettingsPackageModule),
   ],
   // Ở app gốc, thiếu dependency là lỗi thật: dừng build ngay thay vì chỉ
   // in cảnh báo rồi đợi tới lúc chạy mới crash.

@@ -20,11 +20,12 @@ import 'dart:async';
 
 import 'package:feature_auth/feature_auth.dart';
 import 'package:feature_product/feature_product.dart';
+import 'package:feature_settings/feature_settings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:main_app/di/injection.dart';
-import 'package:main_app/placeholders/placeholder_pages.dart';
 import 'package:main_app/router/app_shell.dart';
+import 'package:main_app/router/splash_page.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_domain/shared_domain.dart';
 
@@ -70,12 +71,10 @@ String? redirectForAuth(AuthStatus status, String location) {
 /// Tạo router của app.
 ///
 /// [refreshListenable] phải phát tín hiệu mỗi khi [authBloc] đổi trạng thái
-/// (xem `StreamListenable`). [themeMode] tạm thời được truyền tới màn cài
-/// đặt (Phase 6 thay bằng SettingsCubit).
+/// (xem `StreamListenable`).
 GoRouter createAppRouter({
   required AuthBloc authBloc,
   required Listenable refreshListenable,
-  required ValueNotifier<ThemeMode> themeMode,
 }) {
   return GoRouter(
     initialLocation: AppRoutes.splash,
@@ -148,8 +147,12 @@ GoRouter createAppRouter({
             routes: [
               GoRoute(
                 path: AppRoutes.settings,
-                builder: (_, _) =>
-                    SettingsPlaceholderPage(themeMode: themeMode),
+                // SettingsCubit là toàn cục (App cung cấp); AccountCubit tạo
+                // riêng cho màn này và tự đóng khi rời màn.
+                builder: (_, _) => BlocProvider(
+                  create: (_) => getIt<AccountCubit>(),
+                  child: const SettingsPage(),
+                ),
               ),
             ],
           ),

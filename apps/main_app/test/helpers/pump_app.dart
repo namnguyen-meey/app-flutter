@@ -5,6 +5,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:core/core.dart';
 import 'package:feature_auth/feature_auth.dart';
 import 'package:feature_product/feature_product.dart';
+import 'package:feature_settings/feature_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:l10n/l10n.dart';
 import 'package:main_app/app.dart';
@@ -22,6 +23,10 @@ class MockProductListBloc extends MockBloc<ProductListEvent, ProductListState>
 
 class MockProductDetailCubit extends MockCubit<ProductDetailState>
     implements ProductDetailCubit;
+
+class MockSettingsCubit extends MockCubit<AppSettings> implements SettingsCubit;
+
+class MockAccountCubit extends MockCubit<User?> implements AccountCubit;
 
 /// Người dùng mẫu.
 const testUser = User(
@@ -62,7 +67,9 @@ MockAuthBloc mockAuthBloc(
 /// chạy mãi, khiến `pumpAndSettle` chờ tới khi hết giờ.
 ///
 /// Mỗi test phải gọi `getIt.reset` ở tearDown để lần đăng ký sau không trùng.
-void registerFakeBlocs() {
+///
+/// Trả về AccountCubit giả để test kiểm tra được thao tác đăng xuất.
+MockAccountCubit registerFakeBlocs() {
   final loginBloc = MockLoginBloc();
   when(() => loginBloc.state).thenReturn(const LoginState());
   getIt.registerFactory<LoginBloc>(() => loginBloc);
@@ -80,17 +87,39 @@ void registerFakeBlocs() {
   // mock mặc định trả null sẽ gây lỗi kiểu.
   when(() => productDetailCubit.load(any())).thenAnswer((_) async {});
   getIt.registerFactory<ProductDetailCubit>(() => productDetailCubit);
+
+  final accountCubit = MockAccountCubit();
+  when(() => accountCubit.state).thenReturn(testUser);
+  when(accountCubit.signOut).thenAnswer((_) async {});
+  getIt.registerFactory<AccountCubit>(() => accountCubit);
+  return accountCubit;
+}
+
+/// Tạo SettingsCubit giả có cài đặt [initial] và phát tiếp các giá trị của
+/// [changes] (nếu có).
+MockSettingsCubit mockSettingsCubit({
+  AppSettings initial = const AppSettings(),
+  Stream<AppSettings> changes = const Stream.empty(),
+}) {
+  final cubit = MockSettingsCubit();
+  whenListen(cubit, changes, initialState: initial);
+  return cubit;
 }
 
 /// Dựng App giống bootstrap.dart rồi chờ router điều hướng xong.
 Future<void> pumpApp(
   WidgetTester tester, {
   required AuthBloc authBloc,
+  SettingsCubit? settingsCubit,
   Flavor flavor = Flavor.dev,
 }) async {
   await tester.pumpWidget(
     TranslationProvider(
-      child: App(config: testConfig(flavor), authBloc: authBloc),
+      child: App(
+        config: testConfig(flavor),
+        authBloc: authBloc,
+        settingsCubit: settingsCubit ?? mockSettingsCubit(),
+      ),
     ),
   );
   await tester.pumpAndSettle();

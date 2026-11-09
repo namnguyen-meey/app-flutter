@@ -8,6 +8,7 @@ import 'package:core/core.dart';
 import 'package:dio/dio.dart';
 import 'package:feature_auth/feature_auth.dart';
 import 'package:feature_product/feature_product.dart';
+import 'package:feature_settings/feature_settings.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:main_app/di/injection.dart';
@@ -58,5 +59,9 @@ void main() {
     // feature_product: Bloc/Cubit kéo theo repository, retrofit, drift.
     expect(getIt<ProductListBloc>(), isNotNull);
     expect(getIt<ProductDetailCubit>(), isNotNull);
+    // feature_settings: AccountCubit dùng AuthSession do feature_auth cung
+    // cấp; đây là chỗ kiểm tra "nối" giữa hai feature qua shared_domain.
+    expect(getIt<SettingsCubit>().state, const AppSettings());
+    expect(getIt<AccountCubit>(), isNotNull);
   });
 }

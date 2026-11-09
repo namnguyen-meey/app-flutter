@@ -30,11 +30,10 @@ main_app/
     ├── main_staging.dart
     ├── main_prod.dart
     ├── bootstrap.dart    # khởi động chung: kiểm tra flavor, DI, BlocObserver, AuthBloc
-    ├── app.dart          # widget gốc: theme, ngôn ngữ, router
+    ├── app.dart          # widget gốc: theme + ngôn ngữ theo SettingsCubit, router
     ├── config/           # envied + AppConfig theo environment của injectable
     ├── di/injection.dart # gom DI của mọi package
-    ├── router/           # go_router: guard đăng nhập, bottom navigation (AppShell)
-    └── placeholders/     # màn chờ (splash) + màn cài đặt tạm (Phase 6 thay bằng feature_settings)
+    └── router/           # go_router: guard đăng nhập, bottom navigation (AppShell), màn chờ
 ```
 
 ## Chạy

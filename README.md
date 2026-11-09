@@ -94,6 +94,6 @@ giữa package và cách các quy tắc được bảo vệ.
 - [x] Phase 3: `design_system` + `l10n` + theme
 - [x] Phase 4: `feature_auth` + router có guard
 - [x] Phase 5: `feature_product`
-- [ ] Phase 6: `feature_settings`
+- [x] Phase 6: `feature_settings`
 - [ ] Phase 7: Widgetbook, golden test, integration test, GitHub Actions
 - [ ] Phase 8: Tài liệu hoàn chỉnh

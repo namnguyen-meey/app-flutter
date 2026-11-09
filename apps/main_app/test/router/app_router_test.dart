@@ -10,8 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:l10n/l10n.dart';
 import 'package:main_app/di/injection.dart';
-import 'package:main_app/placeholders/placeholder_pages.dart';
 import 'package:main_app/router/app_router.dart';
+import 'package:main_app/router/splash_page.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_domain/shared_domain.dart';
 
