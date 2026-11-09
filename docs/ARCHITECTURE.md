@@ -212,6 +212,13 @@ import 'package:flutter/material.dart';          // KHÔNG dùng
   nên chỉ dùng đúng chỗ cần và ghi rõ lý do.
 - Bản dịch cho widget Material/Cupertino (`GlobalMaterialLocalizations`) cũng
   lấy từ `material_ui`, không phải từ `flutter_localizations`.
+- **Chiều ngược lại:** công cụ còn dùng bản cũ mà lại BỌC component của
+  mình (widgetbook, alchemist) thì bridge không giúp được. Khi đó tự cung cấp
+  môi trường `material_ui` ở lớp bên trong, ngay quanh component:
+  - widgetbook: `appBuilder` tạo `MaterialApp` của `material_ui`, kèm
+    `ThemeAddon<ThemeData>` (xem `apps/widgetbook_app/lib/src/catalog_setup.dart`).
+  - alchemist: `GoldenScope` (xem
+    `packages/design_system/test/helpers/golden_scope.dart`).
 
 Chuyển code cũ: `dart fix --apply --code=migrate_design_widgets`.
 
@@ -282,13 +289,14 @@ chỗ.
 ## 11. Quy tắc được bảo vệ bằng gì?
 
 Viết quy tắc vào tài liệu thôi thì sớm muộn sẽ có người vi phạm. Repo này
-chặn bằng 3 lớp:
+chặn bằng 3 lớp, và CI chạy lại cả 3 lớp cho mọi Pull Request:
 
 | Lớp | Bắt được gì | Chạy khi nào |
 |---|---|---|
 | **Cấu trúc package** | Mỗi tầng là một package riêng với `pubspec.yaml` riêng, phụ thuộc phải khai báo tường minh | luôn luôn |
 | **Lint** `depend_on_referenced_packages` | Import package chưa khai báo trong pubspec | IDE, `melos run analyze` |
 | **`tools/arch_check`** | Khai báo phụ thuộc sai quy tắc, import lén, domain không sạch, `shared_domain` dùng Flutter | `melos run analyze`, CI |
+| **CI** (`.github/workflows/ci.yaml`) | Mọi lớp trên, cộng format, test và golden test, cho MỌI Pull Request | mỗi PR, mỗi lần push lên `main` |
 
 > **Tại sao cần thêm lớp 2 và 3?** Với Pub Workspaces, mọi package dùng
 > chung **một** `package_config.json` ở root. Về kỹ thuật, `feature_auth`

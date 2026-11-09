@@ -153,13 +153,21 @@ melos:
         flutter: true
         dirExists: test
 
+    # Vì sao không dùng `dart format .`? Lệnh đó format cả code SINH RA
+    # (*.g.dart, *.freezed.dart...). Các file này nằm trong .gitignore, không
+    # ai sửa tay, và build_runner không bảo đảm format giống cấu hình repo,
+    # nên `format:check` có thể fail oan ngay sau `melos run gen`.
+    #
+    # `git ls-files --cached --others --exclude-standard` liệt kê file đã
+    # được git theo dõi CỘNG file mới chưa commit, nhưng BỎ file bị
+    # .gitignore. Nhờ vậy chỉ format code do người viết.
     format:
-      description: Format toàn bộ code Dart trong repo.
-      run: dart format .
+      description: Format code Dart do người viết (bỏ qua code sinh ra).
+      run: dart format $(git ls-files --cached --others --exclude-standard '*.dart')
 
     format:check:
       description: Kiểm tra format, có file chưa format thì fail (dùng trong CI).
-      run: dart format --output=none --set-exit-if-changed .
+      run: dart format --output=none --set-exit-if-changed $(git ls-files --cached --others --exclude-standard '*.dart')
 
     gen:
       description: Sinh code (injectable, envied, freezed, json, retrofit, drift, slang...) cho toàn workspace.

@@ -44,3 +44,27 @@ assets/illustrations/   # SVG minh hoạ
 - Import `package:material_ui/material_ui.dart`, **không** dùng
   `package:flutter/material.dart` (thư viện Material đã tách khỏi Flutter
   framework, xem `docs/ARCHITECTURE.md`).
+
+## Golden test
+
+`test/golden/` chụp ảnh `AppButton`, `AppTextField`, `ProductCard` ở theme
+sáng và tối (dùng **alchemist**), rồi so với ảnh mẫu trong
+`test/golden/goldens/ci/`. Đổi màu, bo góc, khoảng cách trong theme mà làm
+component trông khác đi thì test fail.
+
+```bash
+cd packages/design_system
+flutter test test/golden                    # so sánh với ảnh mẫu
+flutter test --update-goldens test/golden   # đổi giao diện CÓ CHỦ Ý: tạo lại ảnh mẫu
+```
+
+- Chỉ dùng **CI golden**: chữ được vẽ thành khối màu nên ảnh giống hệt nhau
+  trên macOS (máy dev) và Linux (CI). Platform golden (chữ đọc được) đã tắt
+  trong `test/flutter_test_config.dart`, kèm giải thích.
+- Ảnh mẫu **phải được commit** cùng code. Người review xem ảnh thay đổi ngay
+  trong diff của PR.
+- Test fail thì Flutter ghi ảnh so sánh vào `test/golden/failures/` (không
+  commit). Trên CI, các ảnh này được tải lên thành artifact `golden-failures`.
+- alchemist bọc widget bằng Material **kiểu cũ**, nên mỗi golden test bọc
+  thêm `GoldenScope` (`test/helpers/golden_scope.dart`) để cung cấp theme
+  của `material_ui`.

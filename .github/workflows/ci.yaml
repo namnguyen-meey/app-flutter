@@ -1,0 +1,96 @@
+# =============================================================================
+# ci.yaml: kiểm tra chất lượng tự động cho mọi Pull Request.
+#
+# Chạy đúng các lệnh dev chạy trên máy (xem README):
+#   melos bootstrap -> format:check -> analyze (gồm check:arch) -> test
+# Vì CI gọi cùng script melos với máy dev, "máy em chạy được" và "CI chạy
+# được" là MỘT. Không có lệnh nào chỉ tồn tại riêng trong file này.
+#
+# PR chỉ nên được merge khi job này xanh. Bật bắt buộc trong GitHub:
+# Settings -> Branches -> Branch protection rule cho `main` -> Require status
+# checks -> chọn "Format, analyze, test".
+#
+# KHÔNG chạy ở đây:
+#   - Integration test: cần simulator/thiết bị. Chạy tay trước khi release
+#     (README, mục Test).
+#   - Build ứng dụng/ký app: thuộc pipeline phát hành, không thuộc kiểm tra PR.
+# =============================================================================
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  # Cho phép bấm chạy tay trong tab Actions.
+  workflow_dispatch:
+
+# Đẩy commit mới lên cùng PR thì huỷ lần chạy cũ đang dở: kết quả cũ không
+# còn ý nghĩa, lại tốn phút chạy CI.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Quyền tối thiểu: job chỉ cần đọc code.
+permissions:
+  contents: read
+
+env:
+  # Cùng phiên bản Flutter với máy dev. `3.47.x` = bản vá mới nhất của 3.47.
+  # Nâng Flutter cho cả team thì sửa ở đây và trong README cùng một PR.
+  FLUTTER_VERSION: 3.47.x
+
+jobs:
+  quality:
+    name: Format, analyze, test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Lấy code
+        uses: actions/checkout@v7
+
+      - name: Cài Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          # Lưu cache Flutter SDK và thư viện pub giữa các lần chạy.
+          cache: true
+
+      # Cài melos ĐÚNG phiên bản đang khoá trong pubspec.lock (melos là
+      # dev_dependency của workspace), để CI không tự lên bản melos mới hơn
+      # máy dev. flutter-action đã thêm ~/.pub-cache/bin vào PATH, nên các
+      # lệnh `melos` phía dưới (kể cả hook của bootstrap) đều gọi được.
+      - name: Cài melos
+        run: |
+          MELOS_VERSION=$(awk '/^  melos:$/ {found=1} found && /^    version:/ {gsub(/"/, "", $2); print $2; exit}' pubspec.lock)
+          echo "melos $MELOS_VERSION"
+          dart pub global activate melos "$MELOS_VERSION"
+
+      # Hook `post` của bootstrap (xem pubspec.yaml) tự chạy tiếp:
+      #   env:init: tạo file .env.* từ file mẫu *.example (không có bí mật).
+      #   gen: sinh code (freezed, injectable, drift, slang, widgetbook...).
+      # Code sinh ra không được commit, nên CI luôn phải sinh lại.
+      - name: Bootstrap (pub get, tạo .env, sinh code)
+        run: melos bootstrap
+
+      - name: Kiểm tra format
+        run: melos run format:check
+
+      - name: Analyze và kiểm tra kiến trúc
+        run: melos run analyze
+
+      - name: Chạy test (unit, widget, golden)
+        run: melos run test
+
+      # Golden test fail thì Flutter ghi ảnh so sánh (ảnh mẫu, ảnh mới, chỗ
+      # khác nhau) vào thư mục failures/. Tải chúng lên để xem trong trang
+      # kết quả của job, không phải chạy lại trên máy mới biết lệch ở đâu.
+      - name: Lưu ảnh golden bị lệch
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: golden-failures
+          path: '**/test/**/failures/'
+          if-no-files-found: ignore

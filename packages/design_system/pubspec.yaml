@@ -19,10 +19,16 @@ dependencies:
   skeletonizer: ^3.0.0
 
 dev_dependencies:
+  alchemist: ^0.14.1
   flutter_test:
     sdk: flutter
 
 flutter:
+  # Component dùng font icon Material (Icons.*). Khai báo để khi chạy test
+  # của riêng package này (package là "app chính" của test), font icon cũng
+  # được nạp giống trong app thật.
+  uses-material-design: true
+
   # Asset của package được app truy cập qua `package: 'design_system'`
   # (xem AppEmptyView). App KHÔNG cần khai báo lại asset này.
   assets:

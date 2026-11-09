@@ -58,11 +58,32 @@ dễ thấy luồng tự làm mới token trong log.
 ## Chạy test
 
 ```bash
-melos run test                                  # unit + widget test của mọi package
+melos run test                                  # unit, widget, golden test của mọi package
 
 # Integration test: chạy app thật trên simulator/thiết bị, gọi API thật.
 cd apps/main_app && flutter test integration_test --flavor dev
 ```
+
+- **Golden test** (`packages/design_system/test/golden/`): chụp ảnh component
+  rồi so với ảnh mẫu đã commit. Đổi giao diện có chủ ý thì tạo lại ảnh bằng
+  `flutter test --update-goldens test/golden` trong `packages/design_system`
+  (xem README của design_system).
+- **Catalog UI**: `cd apps/widgetbook_app && flutter run -d chrome` để xem
+  từng component với mọi trạng thái (xem README của widgetbook_app).
+
+## CI (GitHub Actions)
+
+`.github/workflows/ci.yaml` chạy cho mọi Pull Request và mỗi lần push lên
+`main`: `melos bootstrap` → `format:check` → `analyze` (gồm kiểm tra kiến
+trúc) → `test`. CI gọi **đúng các script melos** mà dev chạy trên máy, nên
+trước khi đẩy code chỉ cần chạy:
+
+```bash
+melos run format && melos run analyze && melos run test
+```
+
+Integration test không chạy trên CI (cần simulator). Golden test fail thì
+ảnh so sánh được tải lên thành artifact `golden-failures` của lần chạy đó.
 
 ## Script thường dùng
 
@@ -71,7 +92,7 @@ cd apps/main_app && flutter test integration_test --flavor dev
 | `melos bootstrap` | Cài dependency cho cả workspace (một `pubspec.lock` duy nhất ở root) |
 | `melos run analyze` | Kiểm tra quy tắc kiến trúc rồi phân tích tĩnh toàn repo |
 | `melos run test` | Chạy test mọi package (`dart test` / `flutter test`) |
-| `melos run format` | Format toàn bộ code |
+| `melos run format` | Format code do người viết (bỏ qua code sinh ra) |
 | `melos run format:check` | Kiểm tra format, dùng trong CI |
 | `melos run gen` | Sinh code (build_runner `--workspace`) cho toàn repo |
 | `melos run gen:watch` | Như `gen` nhưng tự sinh lại khi sửa code |
@@ -95,5 +116,5 @@ giữa package và cách các quy tắc được bảo vệ.
 - [x] Phase 4: `feature_auth` + router có guard
 - [x] Phase 5: `feature_product`
 - [x] Phase 6: `feature_settings`
-- [ ] Phase 7: Widgetbook, golden test, integration test, GitHub Actions
+- [x] Phase 7: Widgetbook, golden test, integration test, GitHub Actions
 - [ ] Phase 8: Tài liệu hoàn chỉnh

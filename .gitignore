@@ -38,3 +38,8 @@ coverage/
 # (tự chạy sau `melos bootstrap`). Ở dự án thật, CI lấy giá trị từ secret.
 apps/main_app/env/.env.*
 !apps/main_app/env/.env.*.example
+
+# --- Golden test ---
+# Ảnh so sánh do Flutter tạo khi golden test fail (chỉ để xem, không commit).
+# Ảnh mẫu thật nằm trong goldens/ci/ và PHẢI được commit.
+**/test/**/failures/
