@@ -5,7 +5,6 @@
 // Được dùng bởi: app_router.dart.
 //
 // - SplashPage: màn chờ khi khôi phục phiên. Giữ lại lâu dài.
-// - ProductsPlaceholderPage: Phase 5 thay bằng màn danh sách sản phẩm thật.
 // - SettingsPlaceholderPage: Phase 6 thay bằng feature_settings (theme và
 //   ngôn ngữ được LƯU LẠI qua SettingsCubit; hiện chỉ giữ trong bộ nhớ).
 // =============================================================================
@@ -26,24 +25,6 @@ class SplashPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: AppLoadingIndicator(message: context.t.common.loading),
-    );
-  }
-}
-
-/// Tab sản phẩm tạm thời.
-class ProductsPlaceholderPage extends StatelessWidget {
-  /// Tạo màn tạm.
-  const new({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    return Scaffold(
-      appBar: AppBar(title: Text(t.nav.products)),
-      body: AppEmptyView(
-        title: t.placeholder.productsTitle,
-        message: t.placeholder.productsMessage,
-      ),
     );
   }
 }

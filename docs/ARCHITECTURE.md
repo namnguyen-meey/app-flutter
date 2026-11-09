@@ -256,7 +256,15 @@ Router (go_router) nằm ở `main_app`, nơi duy nhất biết mọi feature.
 
  /products, /settings nằm trong StatefulShellRoute.indexedStack (bottom navigation,
  mỗi tab giữ trạng thái riêng)
+ /products/:id là route CON của /products: mở chi tiết thì danh sách vẫn nằm
+ bên dưới (back là về đúng chỗ đang cuộn), bottom navigation vẫn hiện.
 ```
+
+**Feature không biết đường dẫn.** Màn danh sách sản phẩm không gọi
+`context.go('/products/5')`; nó chỉ nhận callback `onProductTap(id)`. Router
+ở `main_app` truyền vào `(id) => context.go(AppRoutes.productDetail(id))`. Nhờ
+vậy feature không phụ thuộc go_router, và đổi cấu trúc URL chỉ cần sửa một
+chỗ.
 
 - Màn hình **không bao giờ tự điều hướng** sau đăng nhập/đăng xuất. Chúng chỉ
   gửi event; trạng thái đổi thì router tự chạy lại `redirect`.

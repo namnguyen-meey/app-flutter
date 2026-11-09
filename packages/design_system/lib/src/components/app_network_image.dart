@@ -43,6 +43,16 @@ class AppNetworkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // URL rỗng (vd: dữ liệu giả của skeleton): hiện ô chờ luôn, không gọi
+    // mạng với một địa chỉ chắc chắn lỗi.
+    if (url.isEmpty) {
+      return SizedBox(
+        width: width,
+        height: height,
+        child: const _ImageStatus(icon: Icons.image_outlined),
+      );
+    }
+
     final image = CachedNetworkImage(
       imageUrl: url,
       width: width,

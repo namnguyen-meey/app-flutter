@@ -1,9 +1,10 @@
-// Tiện ích dựng App trong test, với AuthBloc giả và LoginBloc giả trong DI.
+// Tiện ích dựng App trong test, với AuthBloc giả và các Bloc giả trong DI.
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
 import 'package:core/core.dart';
 import 'package:feature_auth/feature_auth.dart';
+import 'package:feature_product/feature_product.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:l10n/l10n.dart';
 import 'package:main_app/app.dart';
@@ -15,6 +16,12 @@ class MockAuthBloc extends MockBloc<AuthEvent, AuthStatus> implements AuthBloc;
 
 class MockLoginBloc extends MockBloc<LoginEvent, LoginState>
     implements LoginBloc;
+
+class MockProductListBloc extends MockBloc<ProductListEvent, ProductListState>
+    implements ProductListBloc;
+
+class MockProductDetailCubit extends MockCubit<ProductDetailState>
+    implements ProductDetailCubit;
 
 /// Người dùng mẫu.
 const testUser = User(
@@ -48,12 +55,31 @@ MockAuthBloc mockAuthBloc(
   return bloc;
 }
 
-/// Đăng ký LoginBloc giả vào DI, vì router lấy LoginBloc qua `getIt`.
-void registerFakeLoginBloc() {
+/// Đăng ký Bloc/Cubit giả vào DI, vì router lấy chúng qua `getIt`.
+///
+/// Danh sách sản phẩm giả đã tải xong và rỗng; chi tiết sản phẩm giả ở
+/// trạng thái lỗi. Cố ý chọn các state TĨNH: state "đang tải" có vòng xoay
+/// chạy mãi, khiến `pumpAndSettle` chờ tới khi hết giờ.
+///
+/// Mỗi test phải gọi `getIt.reset` ở tearDown để lần đăng ký sau không trùng.
+void registerFakeBlocs() {
   final loginBloc = MockLoginBloc();
   when(() => loginBloc.state).thenReturn(const LoginState());
-  // Mỗi test phải gọi `getIt.reset` ở tearDown để lần đăng ký sau không trùng.
   getIt.registerFactory<LoginBloc>(() => loginBloc);
+
+  final productListBloc = MockProductListBloc();
+  when(() => productListBloc.state).thenReturn(
+    const ProductListState(hasLoadedFirstPage: true, hasMore: false),
+  );
+  getIt.registerFactory<ProductListBloc>(() => productListBloc);
+
+  final productDetailCubit = MockProductDetailCubit();
+  when(() => productDetailCubit.state)
+      .thenReturn(const ProductDetailError(ConnectionFailure()));
+  // Router gọi `load(id)` ngay khi tạo Cubit: phải trả về Future thật,
+  // mock mặc định trả null sẽ gây lỗi kiểu.
+  when(() => productDetailCubit.load(any())).thenAnswer((_) async {});
+  getIt.registerFactory<ProductDetailCubit>(() => productDetailCubit);
 }
 
 /// Dựng App giống bootstrap.dart rồi chờ router điều hướng xong.

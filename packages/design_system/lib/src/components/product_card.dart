@@ -15,7 +15,12 @@ import 'package:design_system/src/theme/theme_context.dart';
 import 'package:design_system/src/tokens/app_spacing.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Thẻ sản phẩm: ảnh vuông, tên, giá, đánh giá, nhãn giảm giá.
+/// Thẻ sản phẩm: ảnh, tên, giá, đánh giá, nhãn giảm giá.
+///
+/// Thiết kế cho ô lưới có CHIỀU CAO CỐ ĐỊNH (vd: `childAspectRatio` của
+/// GridView): phần chữ lấy đúng chiều cao cần, ảnh chiếm phần còn lại. Nhờ
+/// vậy chữ dài hay người dùng tăng cỡ chữ hệ thống thì ảnh nhỏ lại chứ thẻ
+/// không bị tràn (lỗi "overflowed by N pixels").
 class ProductCard extends StatelessWidget {
   /// Tạo thẻ sản phẩm.
   const new({
@@ -62,10 +67,9 @@ class ProductCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AspectRatio(
-              aspectRatio: 1,
+            Expanded(
               child: Stack(
                 fit: StackFit.expand,
                 children: [

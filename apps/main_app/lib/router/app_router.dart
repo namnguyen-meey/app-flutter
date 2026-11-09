@@ -16,7 +16,10 @@
 //   => Không màn hình nào phải tự gọi `context.go('/login')`.
 // =============================================================================
 
+import 'dart:async';
+
 import 'package:feature_auth/feature_auth.dart';
+import 'package:feature_product/feature_product.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:main_app/di/injection.dart';
@@ -35,6 +38,9 @@ abstract final class AppRoutes {
 
   /// Tab sản phẩm.
   static const products = '/products';
+
+  /// Chi tiết sản phẩm [id], route con của tab sản phẩm.
+  static String productDetail(int id) => '$products/$id';
 
   /// Tab cài đặt.
   static const settings = '/settings';
@@ -99,7 +105,42 @@ GoRouter createAppRouter({
             routes: [
               GoRoute(
                 path: AppRoutes.products,
-                builder: (_, _) => const ProductsPlaceholderPage(),
+                builder: (context, _) => BlocProvider(
+                  create: (_) =>
+                      getIt<ProductListBloc>()..add(const ProductListStarted()),
+                  // Feature chỉ báo "đã bấm sản phẩm X"; router quyết định
+                  // đi đâu. Đây là cách app nối màn hình giữa các feature
+                  // mà feature không cần biết đường dẫn.
+                  child: ProductListPage(
+                    onProductTap: (id) =>
+                        context.go(AppRoutes.productDetail(id)),
+                  ),
+                ),
+                routes: [
+                  // Route CON: `/products/:id`. Mở chi tiết thì màn danh
+                  // sách vẫn nằm bên dưới trong stack, bấm back là về đúng
+                  // vị trí đang cuộn; bottom navigation vẫn hiện.
+                  GoRoute(
+                    path: ':id',
+                    // Mã không phải số (vd: gõ tay /products/abc) thì về
+                    // danh sách thay vì crash.
+                    redirect: (_, state) =>
+                        _productIdOf(state) == null ? AppRoutes.products : null,
+                    builder: (_, state) {
+                      final id = _productIdOf(state)!;
+                      return BlocProvider(
+                        create: (_) {
+                          final cubit = getIt<ProductDetailCubit>();
+                          // Không cần chờ: màn hình tự cập nhật theo state
+                          // của Cubit. `unawaited` nói rõ điều đó.
+                          unawaited(cubit.load(id));
+                          return cubit;
+                        },
+                        child: ProductDetailPage(productId: id),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -117,3 +158,7 @@ GoRouter createAppRouter({
     ],
   );
 }
+
+/// Đọc mã sản phẩm từ đường dẫn `/products/:id`. `null` nếu không phải số.
+int? _productIdOf(GoRouterState state) =>
+    int.tryParse(state.pathParameters['id'] ?? '');

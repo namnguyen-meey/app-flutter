@@ -7,6 +7,8 @@
 import 'package:core/core.dart';
 import 'package:dio/dio.dart';
 import 'package:feature_auth/feature_auth.dart';
+import 'package:feature_product/feature_product.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:main_app/di/injection.dart';
 import 'package:shared_domain/shared_domain.dart';
@@ -14,7 +16,18 @@ import 'package:shared_preferences_platform_interface/in_memory_shared_preferenc
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
 void main() {
+  // Cần binding vì tạo ProductDatabase (drift_flutter) gọi ngay
+  // `getTemporaryDirectory()` của path_provider qua platform channel.
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   setUp(() {
+    // Test không có plugin native: giả lập kênh của path_provider trả về một
+    // thư mục bất kỳ. DI test chỉ kiểm tra TẠO được object, không mở file.
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('plugins.flutter.io/path_provider'),
+          (_) async => '/tmp',
+        );
     // shared_preferences được @preResolve lúc khởi tạo DI nên cần nền lưu
     // trữ giả trong bộ nhớ.
     SharedPreferencesAsyncPlatform.instance =
@@ -42,5 +55,8 @@ void main() {
     expect(getIt<LoginBloc>(), isNot(same(getIt<LoginBloc>())));
     // AuthSession (shared_domain) dùng chung trạng thái với AuthBloc.
     expect(getIt<AuthSession>().status, getIt<AuthBloc>().state);
+    // feature_product: Bloc/Cubit kéo theo repository, retrofit, drift.
+    expect(getIt<ProductListBloc>(), isNotNull);
+    expect(getIt<ProductDetailCubit>(), isNotNull);
   });
 }

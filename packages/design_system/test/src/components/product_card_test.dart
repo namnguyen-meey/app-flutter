@@ -6,8 +6,10 @@ import '../../helpers/pump_app.dart';
 
 void main() {
   group('ProductCard', () {
+    // ProductCard cần ô có chiều cao cố định (như một ô trong GridView).
     Widget buildCard({VoidCallback? onTap}) => SizedBox(
       width: 200,
+      height: 320,
       child: ProductCard(
         title: 'iPhone 9',
         imageUrl: 'https://cdn.dummyjson.com/products/1/thumbnail.png',

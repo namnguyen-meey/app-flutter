@@ -24,6 +24,7 @@
     },
     "language": {
       "title": "Language",
+      "system": "System",
       "vi": "Tiếng Việt",
       "en": "English"
     },
@@ -46,8 +47,20 @@
     "products": "Products",
     "settings": "Settings"
   },
-  "placeholder": {
-    "productsTitle": "Coming soon",
-    "productsMessage": "The product list will be built in Phase 5."
+  "products": {
+    "searchHint": "Search products...",
+    "emptyTitle": "No products yet",
+    "emptyMessage": "There are no products to show right now.",
+    "noResultsTitle": "Nothing found",
+    "noResultsMessage": "No products match “$query”.",
+    "endOfList": "You've seen all products",
+    "offlineBanner": "Offline, showing saved data",
+    "detailTitle": "Product details",
+    "brand": "Brand",
+    "category": "Category",
+    "stock": "Stock",
+    "inStock": "$count in stock",
+    "outOfStock": "Out of stock",
+    "description": "Description"
   }
 }

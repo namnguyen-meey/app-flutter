@@ -34,7 +34,7 @@ main_app/
     ├── config/           # envied + AppConfig theo environment của injectable
     ├── di/injection.dart # gom DI của mọi package
     ├── router/           # go_router: guard đăng nhập, bottom navigation (AppShell)
-    └── placeholders/     # màn tạm, thay dần ở Phase 5 (sản phẩm) và Phase 6 (cài đặt)
+    └── placeholders/     # màn chờ (splash) + màn cài đặt tạm (Phase 6 thay bằng feature_settings)
 ```
 
 ## Chạy

@@ -18,7 +18,7 @@ void main() {
     // LocaleSettings là trạng thái TOÀN CỤC của slang. Đặt lại về tiếng Việt
     // trước mỗi test để kết quả không phụ thuộc thứ tự chạy test.
     LocaleSettings.setLocaleSync(AppLocale.vi);
-    registerFakeLoginBloc();
+    registerFakeBlocs();
     authBloc = mockAuthBloc(const Authenticated(testUser));
   });
 

@@ -5,7 +5,9 @@
 // 2. Widget test: dựng app thật với AuthBloc giả, kiểm tra router thực sự
 //    chuyển màn khi trạng thái đăng nhập thay đổi.
 import 'package:feature_auth/feature_auth.dart';
+import 'package:feature_product/feature_product.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:l10n/l10n.dart';
 import 'package:main_app/di/injection.dart';
 import 'package:main_app/placeholders/placeholder_pages.dart';
@@ -41,7 +43,7 @@ void main() {
   group('router + AuthBloc', () {
     setUp(() {
       LocaleSettings.setLocaleSync(AppLocale.vi);
-      registerFakeLoginBloc();
+      registerFakeBlocs();
     });
 
     tearDown(getIt.reset);
@@ -79,7 +81,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(LoginPage), findsNothing);
-      expect(find.byType(ProductsPlaceholderPage), findsOneWidget);
+      expect(find.byType(ProductListPage), findsOneWidget);
       expect(find.byType(NavigationBar), findsOneWidget);
       await changes.close();
     });
@@ -95,13 +97,35 @@ void main() {
           changes: changes.stream,
         ),
       );
-      expect(find.byType(ProductsPlaceholderPage), findsOneWidget);
+      expect(find.byType(ProductListPage), findsOneWidget);
 
       changes.add(const Unauthenticated());
       await tester.pumpAndSettle();
 
       expect(find.byType(LoginPage), findsOneWidget);
       await changes.close();
+    });
+
+    testWidgets('/products/:id mở màn chi tiết, mã không hợp lệ thì về danh '
+        'sách', (tester) async {
+      await pumpApp(
+        tester,
+        authBloc: mockAuthBloc(const Authenticated(testUser)),
+      );
+      // Context của màn danh sách vẫn hợp lệ sau khi mở chi tiết, vì danh
+      // sách vẫn nằm bên dưới trong stack.
+      final listContext = tester.element(find.byType(ProductListPage));
+
+      GoRouter.of(listContext).go(AppRoutes.productDetail(5));
+      await tester.pumpAndSettle();
+      expect(find.byType(ProductDetailPage), findsOneWidget);
+      // Bottom navigation vẫn còn vì chi tiết là route con trong shell.
+      expect(find.byType(NavigationBar), findsOneWidget);
+
+      GoRouter.of(listContext).go('/products/khong-phai-so');
+      await tester.pumpAndSettle();
+      expect(find.byType(ProductDetailPage), findsNothing);
+      expect(find.byType(ProductListPage), findsOneWidget);
     });
   });
 }

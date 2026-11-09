@@ -24,6 +24,7 @@
     },
     "language": {
       "title": "Ngôn ngữ",
+      "system": "Theo máy",
       "vi": "Tiếng Việt",
       "en": "English"
     },
@@ -46,8 +47,20 @@
     "products": "Sản phẩm",
     "settings": "Cài đặt"
   },
-  "placeholder": {
-    "productsTitle": "Sắp ra mắt",
-    "productsMessage": "Danh sách sản phẩm sẽ được làm ở Phase 5."
+  "products": {
+    "searchHint": "Tìm sản phẩm...",
+    "emptyTitle": "Chưa có sản phẩm",
+    "emptyMessage": "Hiện chưa có sản phẩm nào để hiển thị.",
+    "noResultsTitle": "Không tìm thấy",
+    "noResultsMessage": "Không có sản phẩm nào khớp với “$query”.",
+    "endOfList": "Bạn đã xem hết sản phẩm",
+    "offlineBanner": "Đang offline, hiển thị dữ liệu đã lưu",
+    "detailTitle": "Chi tiết sản phẩm",
+    "brand": "Thương hiệu",
+    "category": "Danh mục",
+    "stock": "Kho hàng",
+    "inStock": "Còn $count sản phẩm",
+    "outOfStock": "Hết hàng",
+    "description": "Mô tả"
   }
 }

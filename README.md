@@ -93,7 +93,7 @@ giữa package và cách các quy tắc được bảo vệ.
 - [x] Phase 2: `core` (config/flavor, logger, Failure, network, storage) + DI nền
 - [x] Phase 3: `design_system` + `l10n` + theme
 - [x] Phase 4: `feature_auth` + router có guard
-- [ ] Phase 5: `feature_product`
+- [x] Phase 5: `feature_product`
 - [ ] Phase 6: `feature_settings`
 - [ ] Phase 7: Widgetbook, golden test, integration test, GitHub Actions
 - [ ] Phase 8: Tài liệu hoàn chỉnh
