@@ -51,6 +51,19 @@ Với VS Code: tab **Run and Debug**, chọn `main_app (dev)`...
 `--flavor` và `-t` phải khớp nhau. Nếu chạy nhầm (vd `--flavor prod` với
 `main_dev.dart`), app sẽ báo lỗi ngay khi khởi động.
 
+Đăng nhập bằng tài khoản thử của dummyjson: `emilys` / `emilyspass` (màn
+đăng nhập có nút điền sẵn). Ở flavor `dev`, access token chỉ sống 1 phút để
+dễ thấy luồng tự làm mới token trong log.
+
+## Chạy test
+
+```bash
+melos run test                                  # unit + widget test của mọi package
+
+# Integration test: chạy app thật trên simulator/thiết bị, gọi API thật.
+cd apps/main_app && flutter test integration_test --flavor dev
+```
+
 ## Script thường dùng
 
 | Lệnh | Việc |
@@ -79,7 +92,7 @@ giữa package và cách các quy tắc được bảo vệ.
 - [x] Phase 1: Khởi tạo monorepo, lint, script melos, kiểm tra kiến trúc
 - [x] Phase 2: `core` (config/flavor, logger, Failure, network, storage) + DI nền
 - [x] Phase 3: `design_system` + `l10n` + theme
-- [ ] Phase 4: `feature_auth` + router có guard
+- [x] Phase 4: `feature_auth` + router có guard
 - [ ] Phase 5: `feature_product`
 - [ ] Phase 6: `feature_settings`
 - [ ] Phase 7: Widgetbook, golden test, integration test, GitHub Actions

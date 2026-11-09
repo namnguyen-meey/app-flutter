@@ -150,6 +150,20 @@ apps/main_app/lib/di/injection.dart
 - Codegen chạy bằng `build_runner build --workspace`: một tiến trình build cả
   repo và tự sắp thứ tự (core sinh `CorePackageModule` trước khi main_app
   dùng tới).
+- **Domain không gắn annotation DI.** Use case được đăng ký trong module ở
+  thư mục `di/` của feature; data và presentation thì gắn annotation trực tiếp.
+- **Hai instance cùng kiểu thì đặt tên:** core có 2 `Dio`. Dio chính có
+  AuthInterceptor; Dio `@Named(DioName.unauthenticated)` thì không, và chỉ
+  dùng để làm mới token. Tách riêng để phá vòng phụ thuộc
+  `Dio → TokenRefresher → Dio`.
+- **Class có `@disposeMethod` phải đăng ký theo CHÍNH kiểu của nó**, rồi dùng
+  module để trả cùng instance đó dưới kiểu interface (xem `auth_di.dart`).
+  Đăng ký thẳng bằng `as: Interface` thì code sinh ra gọi `dispose()` trên
+  interface (không có hàm này) và không compile.
+- Generator chỉ kiểm tra dependency **bên trong** từng package. Thiếu cài đặt
+  giữa các package (vd: chưa ai đăng ký `TokenRefresher`) chỉ lộ ra lúc chạy.
+  Vì vậy `apps/main_app/test/di/injection_test.dart` tạo thử mọi dependency
+  quan trọng.
 
 ## 7. Xử lý lỗi thống nhất
 
@@ -194,7 +208,63 @@ import 'package:flutter/material.dart';          // KHÔNG dùng
 
 Chuyển code cũ: `dart fix --apply --code=migrate_design_widgets`.
 
-## 9. Quy tắc được bảo vệ bằng gì?
+## 9. Mẫu viết DTO (freezed + primary constructor)
+
+Dart 3.13 có *primary constructor*: khai báo field ngay trên dòng tên class.
+freezed 4 hỗ trợ cú pháp này, nhưng khi dùng kèm JSON phải theo đúng mẫu sau
+(đã thử nghiệm, xem `feature_auth/lib/src/data/dtos/user_dto.dart`):
+
+```dart
+@freezed                 // freezed lo ==, copyWith, toString
+@JsonSerializable()      // json_serializable lo fromJson/toJson
+class UserDto({
+  required final int id,
+  required final String email,
+}) with _$UserDto {
+  /// Doc của constructor gắn vào `this;` (phần thân của primary constructor).
+  this;
+
+  // Thân dạng block, KHÔNG dùng `=>`: thấy `factory fromJson => ...` thì
+  // freezed tự sinh JSON kiểu cũ, trùng với phần json_serializable sinh.
+  factory fromJson(Map<String, Object?> json) {
+    return _$UserDtoFromJson(json);
+  }
+
+  Map<String, Object?> toJson() => _$UserDtoToJson(this);
+
+  // Method thì được; getter thì freezed đòi constructor `_()`, nên tránh.
+  User toEntity() => User(...);
+}
+```
+
+- DTO khớp từng trường với JSON của API; **entity** là mô hình của app. Chuyển
+  đổi bằng `toEntity()`, để API đổi tên trường thì chỉ phải sửa DTO.
+- DTO chỉ khai báo trường app cần: trường thừa (vd: `password` mà
+  `/auth/me` trả về) bị bỏ qua khi parse và không bao giờ được lưu xuống máy.
+
+## 10. Router và guard đăng nhập
+
+Router (go_router) nằm ở `main_app`, nơi duy nhất biết mọi feature.
+
+```
+                 ┌───────────── refreshListenable ◄── AuthBloc.stream
+                 ▼
+ mọi lần điều hướng ──► redirect = redirectForAuth(AuthBloc.state, location)
+                          AuthUnknown      ─► /splash
+                          Unauthenticated  ─► /login
+                          Authenticated    ─► ở lại (rời /splash, /login thì về /products)
+
+ /products, /settings nằm trong StatefulShellRoute.indexedStack (bottom navigation,
+ mỗi tab giữ trạng thái riêng)
+```
+
+- Màn hình **không bao giờ tự điều hướng** sau đăng nhập/đăng xuất. Chúng chỉ
+  gửi event; trạng thái đổi thì router tự chạy lại `redirect`.
+- `redirectForAuth` là hàm thuần nên test được mọi trường hợp bằng unit test.
+- Bloc được tạo ở "rìa" app (router, bootstrap) bằng `getIt`; widget bên
+  trong chỉ đọc từ context, nhờ vậy widget test chỉ cần cung cấp Bloc giả.
+
+## 11. Quy tắc được bảo vệ bằng gì?
 
 Viết quy tắc vào tài liệu thôi thì sớm muộn sẽ có người vi phạm. Repo này
 chặn bằng 3 lớp:
@@ -210,7 +280,11 @@ chặn bằng 3 lớp:
 > vẫn import được `package:feature_product/...` dù không khai báo, và code
 > vẫn chạy. Chỉ có lint và arch_check chặn được việc này.
 
-## 10. Thêm package mới
+Ngoài ra, analyzer **không** exclude code sinh tự động. `exclude` giấu cả lỗi
+compile trong các file đó, không chỉ lint. Lint của code sinh ra được tắt
+bằng `// ignore_for_file: type=lint` ở đầu file (xem `build.yaml` ở root).
+
+## 12. Thêm package mới
 
 1. Tạo package trong đúng thư mục (`packages/`, `packages/features/`...).
    Thêm `resolution: workspace` và `publish_to: none` vào pubspec.
