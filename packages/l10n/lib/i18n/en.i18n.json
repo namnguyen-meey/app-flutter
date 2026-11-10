@@ -1,0 +1,66 @@
+{
+  "common": {
+    "retry": "Try again",
+    "cancel": "Cancel",
+    "ok": "OK",
+    "loading": "Loading..."
+  },
+  "errors": {
+    "connection": "No internet connection. Please check and try again.",
+    "timeout": "The server took too long to respond. Please try again.",
+    "unauthorized": "Your session has expired. Please sign in again.",
+    "invalidCredentials": "Incorrect username or password.",
+    "notFound": "The requested data could not be found.",
+    "server": "The server is having problems. Please try again later.",
+    "cache": "Could not read data saved on this device.",
+    "unknown": "Something went wrong. Please try again."
+  },
+  "settings": {
+    "theme": {
+      "title": "Appearance",
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "language": {
+      "title": "Language",
+      "system": "System",
+      "vi": "Tiếng Việt",
+      "en": "English"
+    },
+    "account": "Account",
+    "signOut": "Sign out"
+  },
+  "auth": {
+    "title": "Sign in",
+    "subtitle": "Welcome back to the shop",
+    "username": "Username",
+    "password": "Password",
+    "usernameRequired": "Please enter your username",
+    "passwordRequired": "Please enter your password",
+    "submit": "Sign in",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "useDemoAccount": "Use demo account (emilys)"
+  },
+  "nav": {
+    "products": "Products",
+    "settings": "Settings"
+  },
+  "products": {
+    "searchHint": "Search products...",
+    "emptyTitle": "No products yet",
+    "emptyMessage": "There are no products to show right now.",
+    "noResultsTitle": "Nothing found",
+    "noResultsMessage": "No products match “$query”.",
+    "endOfList": "You've seen all products",
+    "offlineBanner": "Offline, showing saved data",
+    "detailTitle": "Product details",
+    "brand": "Brand",
+    "category": "Category",
+    "stock": "Stock",
+    "inStock": "$count in stock",
+    "outOfStock": "Out of stock",
+    "description": "Description"
+  }
+}

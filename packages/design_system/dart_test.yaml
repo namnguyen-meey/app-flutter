@@ -1,0 +1,8 @@
+# Cấu hình của `flutter test` cho design_system.
+#
+# alchemist gắn tag `golden` cho mọi golden test. Khai báo tag ở đây để
+# `flutter test` không cảnh báo "tag chưa được khai báo", và để lọc được:
+#   flutter test --tags golden          # chỉ chạy golden test
+#   flutter test --exclude-tags golden  # bỏ qua golden test
+tags:
+  golden:

@@ -1,0 +1,39 @@
+{
+  // Cấu hình chạy app cho VS Code: mở tab "Run and Debug" rồi chọn flavor.
+  // Mỗi mục tương đương lệnh:
+  //   cd apps/main_app && flutter run --flavor <flavor> -t lib/main_<flavor>.dart
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "main_app (dev)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/main_app",
+      "program": "lib/main_dev.dart",
+      "args": ["--flavor", "dev"]
+    },
+    {
+      "name": "main_app (staging)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/main_app",
+      "program": "lib/main_staging.dart",
+      "args": ["--flavor", "staging"]
+    },
+    {
+      "name": "main_app (prod)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/main_app",
+      "program": "lib/main_prod.dart",
+      "args": ["--flavor", "prod"]
+    },
+    {
+      "name": "widgetbook_app",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/widgetbook_app",
+      "program": "lib/main.dart"
+    }
+  ]
+}

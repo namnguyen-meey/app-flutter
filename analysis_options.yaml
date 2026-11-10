@@ -1,0 +1,31 @@
+# =============================================================================
+# analysis_options.yaml DÙNG CHUNG cho toàn bộ monorepo.
+#
+# Analyzer tìm file analysis_options.yaml gần nhất, tính từ file .dart đi
+# ngược lên thư mục cha. Các package con cố ý KHÔNG có file riêng, nên tất cả
+# dùng chung file này: một bộ luật duy nhất, không package nào "lách luật".
+#
+# very_good_analysis bật sẵn các rule rất quan trọng với monorepo:
+#   - depend_on_referenced_packages: cấm import package chưa khai báo trong
+#     pubspec. Với Pub Workspaces, mọi package dùng chung một package_config
+#     nên về kỹ thuật feature_auth VẪN import được feature_product dù không
+#     khai báo. Rule này (cùng tools/arch_check) chặn lỗ hổng đó.
+#   - always_use_package_imports: luôn import dạng `package:...`.
+#   - sort_pub_dependencies: dependency trong pubspec phải xếp theo alphabet
+#     (giảm conflict khi nhiều người cùng thêm package).
+#   - public_member_api_docs: API public phải có doc comment.
+# =============================================================================
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  # CỐ Ý KHÔNG exclude code sinh tự động (*.g.dart, *.freezed.dart,
+  # *.config.dart, *.module.dart). `exclude` giấu luôn cả LỖI COMPILE trong
+  # các file đó, không chỉ lint. Ví dụ thật đã gặp: injectable sinh code gọi
+  # `dispose()` trên một interface không có hàm này; analyzer im lặng, chỉ tới
+  # lúc chạy test mới vỡ.
+  # Lint trong code sinh ra đã được tắt bằng `// ignore_for_file: type=lint`
+  # ở đầu từng file (các generator tự thêm; riêng json_serializable được cấu
+  # hình trong build.yaml ở root).
+  exclude:
+    # Output build của Flutter.
+    - "**/build/**"

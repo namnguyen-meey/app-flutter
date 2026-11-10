@@ -1,0 +1,23 @@
+# Tầng 2 (nền tảng) - đa ngôn ngữ (vi, en) bằng slang.
+# Phụ thuộc shared_domain để chuyển Failure -> câu thông báo theo ngôn ngữ.
+name: l10n
+description: Đa ngôn ngữ (vi, en) dùng slang và thông báo lỗi theo ngôn ngữ.
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_domain: ^0.1.0
+  slang: ^4.19.2
+  slang_flutter: ^4.19.0
+
+dev_dependencies:
+  build_runner: ^2.16.1
+  flutter_test:
+    sdk: flutter
+  slang_build_runner: ^4.19.0

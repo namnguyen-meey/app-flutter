@@ -1,0 +1,25 @@
+# build.yaml của widgetbook_app: cấu hình widgetbook_generator.
+#
+# widgetbook_generator gồm nhiều builder:
+#   - use_case_builder: tìm các hàm có `@UseCase` trong lib/.
+#   - app_builder: gom chúng thành cây thư mục `directories` trong
+#     lib/main.directories.g.dart (file có `@App`).
+#   - telemetry: GỬI thống kê sử dụng lên máy chủ của Widgetbook (Mixpanel)
+#     mỗi lần build trên máy dev. Dữ liệu gồm hash email git, SHA commit đầu
+#     tiên của repo, URL chủ sở hữu remote `origin`, danh sách use case.
+#
+# Repo mẫu TẮT telemetry: build code không nên âm thầm gửi thông tin về repo
+# ra ngoài khi chưa có ai trong team đồng ý. Muốn bật lại thì xoá khối
+# `widgetbook_generator:telemetry` bên dưới.
+targets:
+  $default:
+    builders:
+      widgetbook_generator:telemetry:
+        enabled: false
+      # Chỉ quét lib/: use case không nằm trong test/.
+      widgetbook_generator:use_case_builder:
+        generate_for:
+          - lib/**
+      widgetbook_generator:app_builder:
+        generate_for:
+          - lib/main.dart

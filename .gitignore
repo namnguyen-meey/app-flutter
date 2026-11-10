@@ -1,0 +1,45 @@
+# =============================================================================
+# .gitignore dùng chung toàn repo.
+# Lưu ý: pubspec.lock ở root PHẢI được commit (melos và Pub Workspaces
+# khuyến nghị) để cả team và CI dùng đúng cùng một bộ version.
+# =============================================================================
+
+# --- Dart / Flutter ---
+.dart_tool/
+build/
+coverage/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+
+# --- IDE ---
+# melos tự sinh cấu hình IntelliJ/Android Studio vào .idea/ khi bootstrap.
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# --- Hệ điều hành ---
+.DS_Store
+
+# --- Code sinh tự động ---
+# Không commit code sinh ra: chạy `melos run gen` sau khi bootstrap để tạo
+# lại. Tại sao? Diff PR gọn hơn, không bao giờ conflict ở file sinh tự động,
+# và tránh lộ giá trị nhạy cảm (envied sinh file chứa giá trị biến môi trường).
+*.g.dart
+*.freezed.dart
+# injectable: *.config.dart (app gốc), *.module.dart (micro package)
+*.config.dart
+*.module.dart
+
+# --- Biến môi trường của từng flavor ---
+# Chỉ commit file mẫu (*.example). File thật do `melos run env:init` tạo ra
+# (tự chạy sau `melos bootstrap`). Ở dự án thật, CI lấy giá trị từ secret.
+apps/main_app/env/.env.*
+!apps/main_app/env/.env.*.example
+
+# --- Golden test ---
+# Ảnh so sánh do Flutter tạo khi golden test fail (chỉ để xem, không commit).
+# Ảnh mẫu thật nằm trong goldens/ci/ và PHẢI được commit.
+**/test/**/failures/

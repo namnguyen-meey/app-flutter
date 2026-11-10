@@ -1,0 +1,35 @@
+# Tầng 2 (nền tảng) - UI thuần: theme, token màu/chữ, component dùng chung.
+# Không phụ thuộc package nội bộ nào để có thể đem sang app khác hoặc
+# xem riêng trong widgetbook.
+name: design_system
+description: Theme, design token và component UI dùng chung.
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  cached_network_image: ^4.0.6
+  flutter:
+    sdk: flutter
+  flutter_svg: ^2.3.2
+  material_ui: ^1.10.0
+  skeletonizer: ^3.0.0
+
+dev_dependencies:
+  alchemist: ^0.14.1
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  # Component dùng font icon Material (Icons.*). Khai báo để khi chạy test
+  # của riêng package này (package là "app chính" của test), font icon cũng
+  # được nạp giống trong app thật.
+  uses-material-design: true
+
+  # Asset của package được app truy cập qua `package: 'design_system'`
+  # (xem AppEmptyView). App KHÔNG cần khai báo lại asset này.
+  assets:
+    - assets/illustrations/

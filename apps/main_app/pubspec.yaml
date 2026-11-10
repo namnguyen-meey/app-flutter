@@ -1,0 +1,48 @@
+# Tầng 4 (app) - nơi DUY NHẤT biết tất cả các package.
+# Nhiệm vụ: cấu hình flavor, gom DI của mọi package, dựng router, chạy app.
+# Gần như không chứa nghiệp vụ; nghiệp vụ nằm trong các feature.
+name: main_app
+description: Ứng dụng chính - flavor, DI tổng, router.
+publish_to: none
+version: 0.1.0+1
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  bloc: ^9.2.1
+  core: ^0.1.0
+  design_system: ^0.1.0
+  envied: ^1.3.10
+  feature_auth: ^0.1.0
+  feature_product: ^0.1.0
+  feature_settings: ^0.1.0
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  get_it: ^9.3.0
+  go_router: ^18.1.3
+  injectable: ^3.0.0
+  l10n: ^0.1.0
+  material_ui: ^1.10.0
+  shared_domain: ^0.1.0
+  talker: ^5.2.0
+  talker_bloc_logger: ^5.2.0
+
+dev_dependencies:
+  bloc_test: ^10.0.0
+  build_runner: ^2.16.1
+  dio: ^5.11.1
+  envied_generator: ^1.3.10
+  flutter_flavorizr: ^2.6.0
+  flutter_test:
+    sdk: flutter
+  injectable_generator: ^3.1.3
+  integration_test:
+    sdk: flutter
+  mocktail: ^1.0.5
+  shared_preferences_platform_interface: ^2.4.2
+
+flutter:
+  uses-material-design: true

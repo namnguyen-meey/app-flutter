@@ -1,0 +1,27 @@
+# =============================================================================
+# build.yaml: cấu hình slang (đa ngôn ngữ) cho build_runner.
+#
+# slang đọc lib/i18n/<locale>.i18n.json và sinh lib/i18n/strings.g.dart chứa
+# class Translations an toàn kiểu: gõ sai tên khoá là lỗi compile, không phải
+# lỗi lúc chạy như cách dùng Map<String, String>.
+# =============================================================================
+targets:
+  $default:
+    builders:
+      slang_build_runner:
+        options:
+          # Tiếng Việt là ngôn ngữ gốc: mọi khoá phải có trong vi.i18n.json.
+          base_locale: vi
+          # `none` (mặc định): ngôn ngữ khác thiếu khoá nào là KHÔNG compile
+          # được. Nhờ vậy không bao giờ phát hành bản dịch thiếu.
+          fallback_strategy: none
+          input_directory: lib/i18n
+          input_file_pattern: .i18n.json
+          output_directory: lib/i18n
+          output_file_name: strings.g.dart
+          # Tắt nạp chậm. Nạp chậm chỉ có tác dụng trên web, và khiến
+          # API đổi ngôn ngữ phải chờ (async). Chỉ 2 ngôn ngữ nên nạp hết.
+          lazy: false
+          # Không ghi thời điểm build vào file sinh ra, để chạy gen lại mà
+          # nội dung không đổi thì file cũng không đổi.
+          timestamp: false

@@ -1,0 +1,66 @@
+{
+  "common": {
+    "retry": "Thử lại",
+    "cancel": "Huỷ",
+    "ok": "Đồng ý",
+    "loading": "Đang tải..."
+  },
+  "errors": {
+    "connection": "Không có kết nối mạng. Vui lòng kiểm tra và thử lại.",
+    "timeout": "Máy chủ phản hồi quá lâu. Vui lòng thử lại.",
+    "unauthorized": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+    "invalidCredentials": "Sai tên đăng nhập hoặc mật khẩu.",
+    "notFound": "Không tìm thấy dữ liệu.",
+    "server": "Máy chủ đang gặp sự cố. Vui lòng thử lại sau.",
+    "cache": "Không đọc được dữ liệu đã lưu trên máy.",
+    "unknown": "Đã có lỗi xảy ra. Vui lòng thử lại."
+  },
+  "settings": {
+    "theme": {
+      "title": "Giao diện",
+      "system": "Hệ thống",
+      "light": "Sáng",
+      "dark": "Tối"
+    },
+    "language": {
+      "title": "Ngôn ngữ",
+      "system": "Theo máy",
+      "vi": "Tiếng Việt",
+      "en": "English"
+    },
+    "account": "Tài khoản",
+    "signOut": "Đăng xuất"
+  },
+  "auth": {
+    "title": "Đăng nhập",
+    "subtitle": "Chào mừng bạn quay lại cửa hàng",
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "usernameRequired": "Vui lòng nhập tên đăng nhập",
+    "passwordRequired": "Vui lòng nhập mật khẩu",
+    "submit": "Đăng nhập",
+    "showPassword": "Hiện mật khẩu",
+    "hidePassword": "Ẩn mật khẩu",
+    "useDemoAccount": "Dùng tài khoản thử (emilys)"
+  },
+  "nav": {
+    "products": "Sản phẩm",
+    "settings": "Cài đặt"
+  },
+  "products": {
+    "searchHint": "Tìm sản phẩm...",
+    "emptyTitle": "Chưa có sản phẩm",
+    "emptyMessage": "Hiện chưa có sản phẩm nào để hiển thị.",
+    "noResultsTitle": "Không tìm thấy",
+    "noResultsMessage": "Không có sản phẩm nào khớp với “$query”.",
+    "endOfList": "Bạn đã xem hết sản phẩm",
+    "offlineBanner": "Đang offline, hiển thị dữ liệu đã lưu",
+    "detailTitle": "Chi tiết sản phẩm",
+    "brand": "Thương hiệu",
+    "category": "Danh mục",
+    "stock": "Kho hàng",
+    "inStock": "Còn $count sản phẩm",
+    "outOfStock": "Hết hàng",
+    "description": "Mô tả"
+  }
+}

@@ -1,0 +1,18 @@
+# Tầng 1 (lõi) - Dart THUẦN, không phụ thuộc Flutter.
+# Chứa những khái niệm nghiệp vụ dùng chung: Failure, UseCase, entity dùng
+# chung, interface để các feature giao tiếp với nhau.
+# Tại sao Dart thuần? Để domain layer của mọi feature import được mà không
+# kéo theo Flutter/dio, và test chạy cực nhanh bằng `dart test`.
+name: shared_domain
+description: Entity, Failure, UseCase và interface dùng chung giữa các feature (Dart thuần).
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+dev_dependencies:
+  test: ^1.31.1
+dependencies:
+  equatable: ^3.0.0
+  fpdart: ^1.2.0

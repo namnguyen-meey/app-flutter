@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke="#000000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Hộp các-tông đang mở: hình minh hoạ cho trạng thái "không có dữ liệu".
+       Vẽ bằng MỘT màu để AppEmptyView tô lại theo màu primary của theme. -->
+  <path d="M20 46 L60 28 L100 46 L60 64 Z"/>
+  <path d="M20 46 V84 L60 102 L100 84 V46"/>
+  <path d="M60 64 V102"/>
+  <path d="M20 46 L8 60 L48 78 L60 64"/>
+  <path d="M100 46 L112 60 L72 78 L60 64"/>
+</svg>

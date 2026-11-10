@@ -1,0 +1,19 @@
+# =============================================================================
+# build.yaml: cấu hình build_runner cho main_app.
+#
+# Tại sao cần file này? envied đọc file env/.env.<flavor>. build_runner chỉ
+# theo dõi những file nằm trong `sources`; mặc định không có env/. Thiếu khai
+# báo thì sửa .env xong chạy `melos run gen` sẽ KHÔNG sinh lại code, vì
+# build_runner nghĩ "không có gì thay đổi".
+#
+# Lưu ý: khai báo `sources` là GHI ĐÈ danh sách mặc định, nên phải liệt kê
+# lại cả những thư mục mặc định đang dùng (lib, test...).
+# =============================================================================
+targets:
+  $default:
+    sources:
+      - $package$
+      - pubspec.yaml
+      - lib/**
+      - test/**
+      - env/.env.*
