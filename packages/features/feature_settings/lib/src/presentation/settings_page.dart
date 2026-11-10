@@ -19,7 +19,13 @@ import 'package:shared_domain/shared_domain.dart';
 /// Màn cài đặt: tài khoản, giao diện, ngôn ngữ, đăng xuất.
 class SettingsPage extends StatelessWidget {
   /// Tạo màn cài đặt.
-  const new({super.key});
+  const new({this.onOpenNavigationLab, super.key});
+
+  /// Mở trang "Học điều hướng" (thí nghiệm GoRouter). `null` thì ẩn mục này.
+  ///
+  /// Màn hình không biết trang đó nằm ở đường dẫn nào: app truyền callback
+  /// vào, giống cách ProductListPage nhận `onProductTap`.
+  final VoidCallback? onOpenNavigationLab;
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +93,18 @@ class SettingsPage extends StatelessWidget {
                   context.read<SettingsCubit>().changeLanguage(selected.single),
             ),
           ),
+          if (onOpenNavigationLab case final openLab?) ...[
+            const SizedBox(height: AppSpacing.xl),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.alt_route_rounded),
+                title: Text(t.navLab.entry),
+                subtitle: Text(t.navLab.entrySubtitle),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: openLab,
+              ),
+            ),
+          ],
           const SizedBox(height: AppSpacing.xxl),
           AppButton(
             label: t.settings.signOut,

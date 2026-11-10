@@ -45,7 +45,9 @@
   },
   "nav": {
     "products": "Products",
-    "settings": "Settings"
+    "settings": "Settings",
+    "tasks": "Tasks",
+    "statistics": "Statistics"
   },
   "products": {
     "searchHint": "Search products...",
@@ -62,5 +64,114 @@
     "inStock": "$count in stock",
     "outOfStock": "Out of stock",
     "description": "Description"
+  },
+  "tasks": {
+    "title": "My tasks",
+    "subtitle": "Plan, track and finish one task at a time.",
+    "add": "Add task",
+    "searchHint": "Search tasks...",
+    "progress": "$completed/$total tasks done",
+    "filter": {
+      "all": "All",
+      "active": "Active",
+      "completed": "Done"
+    },
+    "priority": {
+      "label": "Priority",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "emptyTitle": "No tasks yet",
+    "emptyMessage": "Tap “Add task” to create your first task.",
+    "noResultsTitle": "No matching tasks",
+    "noResultsMessage": "Try another keyword or another filter.",
+    "dueDate": "Due",
+    "noDueDate": "No due date",
+    "yesterday": "Yesterday",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "dueOn": "Due: $date",
+    "overdueOn": "Overdue · $date",
+    "createdAt": "Created",
+    "createdOn": "Created $time",
+    "markCompleted": "Mark as done",
+    "markActive": "Mark as not done",
+    "statusCompleted": "Done",
+    "statusActive": "In progress",
+    "detailTitle": "Task details",
+    "edit": "Edit task",
+    "duplicate": "Duplicate",
+    "delete": "Delete task",
+    "deleteConfirmTitle": "Delete task?",
+    "deleteConfirmMessage": "“$title” will be deleted permanently.",
+    "deleteConfirm": "Delete",
+    "pageAddress": "Address of this page",
+    "notFoundTitle": "Task not found",
+    "notFoundMessage": "There is no task with id “$id”. It may have been deleted.",
+    "editor": {
+      "createTitle": "New task",
+      "editTitle": "Edit task",
+      "title": "Title",
+      "titleHint": "E.g. Study Flutter for 30 minutes",
+      "titleRequired": "Please enter a title",
+      "description": "Description",
+      "descriptionHint": "Extra notes (optional)",
+      "pickDueDate": "Set due date",
+      "clearDueDate": "Remove due date",
+      "dueDateHelp": "Pick a due date",
+      "save": "Save",
+      "close": "Close"
+    },
+    "statistics": {
+      "subtitle": "Look back at your progress to plan better.",
+      "emptyTitle": "No data yet",
+      "emptyMessage": "Add some tasks to see your progress.",
+      "openTasks": "Go to Tasks",
+      "progressTitle": "Completion",
+      "allDone": "Great! Every task is done.",
+      "progressMessage": "$completed/$total tasks done, $remaining left.",
+      "byDeadline": "Unfinished tasks by due date",
+      "overdue": "Overdue",
+      "dueToday": "Today",
+      "upcoming": "Upcoming",
+      "noDueDate": "No due date",
+      "byPriority": "Progress by priority",
+      "priorityProgress": "$completed/$total"
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "The address “$location” does not exist in this app.",
+    "invalidTaskTitle": "Invalid task id",
+    "invalidTaskMessage": "“$id” is not a task id. Task ids only contain digits.",
+    "backHome": "Go to home"
+  },
+  "navLab": {
+    "entry": "Learn navigation (GoRouter)",
+    "entrySubtitle": "Try go/push, deep links, error pages, ShellRoute",
+    "title": "Learn navigation",
+    "intro": "Each item is a small experiment. Details in docs/NAVIGATION_GUIDE.md.",
+    "currentLocation": "Location: $location",
+    "sectionLinks": "Paths and parameters",
+    "completedTasks": "Show completed tasks",
+    "notFound": "Open a page that does not exist",
+    "invalidTask": "Open a task with an invalid id",
+    "missingTask": "Open a task that no longer exists",
+    "sectionShell": "Tabs and navigation stacks",
+    "shellDemo": "ShellRoute demo",
+    "statefulShellDemo": "StatefulShellRoute demo",
+    "shellDemoHint": "Raise the counter on tab A, open its child page, switch to tab B, then come back.",
+    "demo": {
+      "counter": "Pressed $count times",
+      "increase": "Increase counter",
+      "openChild": "Open child page",
+      "childTitle": "Child page of $tab",
+      "childMessage": "This page lives in the stack of $tab. Switch tab and come back to see whether it is still there.",
+      "exit": "Exit demo",
+      "createdAt": "This page was created at $time",
+      "tryHint": "Try it: raise the counter, open the child page, switch to the other tab, then come back. Are the counter, the creation time and the child page still there?",
+      "back": "Back"
+    }
   }
 }

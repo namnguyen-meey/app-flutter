@@ -1,38 +1,26 @@
 # my_flutter_app
 
-Repo học Flutter, gồm 2 app nằm chung một monorepo:
-
-| App | Ở đâu | Là gì |
-|---|---|---|
-| **main_app** | `apps/main_app` | App bán hàng mẫu theo chuẩn team lớn (phần lớn README này nói về nó) |
-| **todo_app** | `apps/todo_app` | Todo app viết trước đó: lưu local, tab dưới, go_router. Có README riêng |
-
-Todo app **chưa** theo chuẩn của monorepo: không nằm trong `workspace:`,
-dùng bộ lint `flutter_lints` riêng, và các script `melos` (analyze, format,
-test) cũng như CI đều bỏ qua nó. Chạy và kiểm tra Todo app ngay trong thư mục
-của nó:
-
-```bash
-cd apps/todo_app
-flutter pub get && flutter analyze && flutter test
-flutter run            # hoặc chọn "todo_app" trong Run and Debug của VS Code
-```
-
----
-
-Codebase mẫu Flutter theo chuẩn team lớn: **monorepo nhiều package**, Bloc,
+Repo học Flutter theo chuẩn team lớn: **monorepo nhiều package**, Bloc,
 Clean Architecture, quy trình chất lượng chặt. Mục đích chính là để học cách
 tổ chức dự án nên code có comment tiếng Việt giải thích kỹ, cả "làm gì" lẫn
 "tại sao".
 
-**App làm gì?** Một app bán hàng nhỏ dùng API công khai
-[dummyjson](https://dummyjson.com):
+**App làm gì?** MỘT app gom mọi tính năng và kiến thức: bán hàng nhỏ dùng API
+công khai [dummyjson](https://dummyjson.com), cộng với Todo app viết trước đây
+(nay là tab Công việc và Thống kê):
 
 - **Đăng nhập**: token lưu an toàn, tự làm mới token khi hết hạn, giữ phiên
   khi mở lại app.
 - **Sản phẩm**: danh sách phân trang, kéo để làm mới, khung xương khi tải,
   tìm kiếm có debounce, cache offline, màn chi tiết.
-- **Cài đặt**: theme sáng/tối, tiếng Việt/tiếng Anh (được lưu lại), đăng xuất.
+- **Công việc**: danh sách có tìm kiếm và bộ lọc trên URL, tạo / sửa / nhân
+  bản / xoá, hạn chót, độ ưu tiên; lưu trên máy bằng SQLite, mọi màn tự cập
+  nhật khi dữ liệu đổi.
+- **Thống kê**: tiến độ, việc theo thời hạn và độ ưu tiên; huy hiệu số việc
+  quá hạn trên thanh tab.
+- **Cài đặt**: theme sáng/tối, tiếng Việt/tiếng Anh (được lưu lại), đăng xuất,
+  và trang **Học điều hướng** để thử go/push, deep link, trang lỗi,
+  ShellRoute vs StatefulShellRoute.
 
 **Công nghệ chính:** melos + Pub Workspaces, flutter_bloc, go_router,
 get_it + injectable, dio + retrofit, freezed, fpdart, drift, slang,
@@ -47,6 +35,7 @@ widgetbook, alchemist, GitHub Actions. Lý do chọn từng thư viện:
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Các tầng, quy tắc phụ thuộc, DI, xử lý lỗi, router, cách quy tắc được bảo vệ |
 | [docs/PACKAGES.md](docs/PACKAGES.md) | Package nội bộ, thư viện bên ngoài: vai trò, lựa chọn thay thế |
 | [docs/BLOC_GUIDE.md](docs/BLOC_GUIDE.md) | Bloc hay Cubit, đặt tên event, thiết kế state, transformer, test |
+| [docs/NAVIGATION_GUIDE.md](docs/NAVIGATION_GUIDE.md) | GoRouter từ A tới Z (so sánh với React Navigation): go/push, tham số URL, `extra`, redirect, deep link, nhiều tab |
 | [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Quy trình nhánh, commit, PR, review, quy tắc code |
 | [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) | (Tuỳ chọn) Sentry / Crashlytics, Remote Config |
 
@@ -154,8 +143,7 @@ Integration test không chạy trên CI (cần simulator). Golden test fail thì
 ```
 apps/
 ├── main_app/            # app chính: bootstrap, DI gốc, router, flavor
-├── widgetbook_app/      # catalog UI của design system
-└── todo_app/            # Todo app (ngoài workspace, xem đầu README)
+└── widgetbook_app/      # catalog UI của design system
 packages/
 ├── shared_domain/       # Failure, UseCase, User, AuthSession (Dart thuần)
 ├── core/                # config, logger, network, storage, DI nền
@@ -164,7 +152,8 @@ packages/
 └── features/
     ├── feature_auth/      # mỗi feature: lib/src/{data,domain,presentation,di}
     ├── feature_product/
-    └── feature_settings/
+    ├── feature_settings/
+    └── feature_todo/      # công việc + thống kê (Todo app cũ, viết lại)
 tools/arch_check/        # kiểm tra quy tắc phụ thuộc giữa package
 docs/                    # tài liệu (bảng ở trên)
 .github/                 # CI, mẫu Pull Request
@@ -199,3 +188,4 @@ Các tầng, quy tắc phụ thuộc giữa package và cách các quy tắc đ�
 - [x] Phase 6: `feature_settings`
 - [x] Phase 7: Widgetbook, golden test, integration test, GitHub Actions
 - [x] Phase 8: Tài liệu hoàn chỉnh (LEARNING_PATH, PACKAGES, BLOC_GUIDE, CONTRIBUTING, OBSERVABILITY)
+- [x] Phase 9: Gộp Todo app vào app chính: `feature_todo` (drift, Bloc), tab Công việc + Thống kê, deep link, trang Học điều hướng, NAVIGATION_GUIDE

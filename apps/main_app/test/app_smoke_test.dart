@@ -44,6 +44,9 @@ void main() {
     await openSettings(tester);
 
     expect(find.text('Emily Johnson'), findsOneWidget);
+    // Nút nằm cuối trang, có thể ngoài màn hình test (800x600): cuộn tới.
+    await tester.ensureVisible(find.text('Đăng xuất'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Đăng xuất'));
     verify(() => accountCubit.signOut()).called(1);
   });

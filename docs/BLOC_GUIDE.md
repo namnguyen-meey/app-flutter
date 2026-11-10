@@ -51,6 +51,10 @@ cầu**:
 | `ProductDetailCubit` | Cubit | Chỉ một hành động: tải (và tải lại) |
 | `SettingsCubit` | Cubit | Hai hàm đơn giản: đổi theme, đổi ngôn ngữ |
 | `AccountCubit` | Cubit | Hiện người dùng hiện tại, một hàm đăng xuất |
+| `TaskListBloc` | Bloc | Nghe database (`emit.forEach` + `restartable`); các lần ghi cần `sequential` |
+| `TaskDetailCubit` | Cubit | Vài hành động đơn giản; hàm TRẢ VỀ kết quả (`Future<Failure?>`) cho màn hình |
+| `TaskEditorCubit` | Cubit | Form; chặn bấm "Lưu" hai lần bằng cách kiểm tra state, không cần transformer |
+| `TaskSummaryCubit` | Cubit | Chỉ nghe database và tính số liệu; đặt ở khung tab, dùng chung cho nhiều màn |
 
 Đổi từ Cubit sang Bloc sau này cũng không khó: UI chỉ đổi `cubit.load(id)`
 thành `bloc.add(...)`, còn state giữ nguyên.
@@ -166,7 +170,7 @@ cho từng `on<...>()` (package `bloc_concurrency`):
 | `concurrent()` (mặc định) | Chạy song song | Event cập nhật state đồng bộ, không gọi API | `LoginUsernameChanged` |
 | `droppable()` | Đang chạy thì **bỏ qua** event mới | Gửi form, tải trang tiếp, đăng xuất | `LoginSubmitted`, `ProductListNextPageRequested` |
 | `restartable()` | Có event mới thì **huỷ** handler cũ (không emit nữa), chạy cái mới | Làm mới, tìm kiếm | `ProductListRefreshed` |
-| `sequential()` | Xếp hàng, chạy lần lượt | Thao tác phải đúng thứ tự (thêm/xoá giỏ hàng) | (chưa dùng) |
+| `sequential()` | Xếp hàng, chạy lần lượt | Thao tác phải đúng thứ tự | `TaskListCompletionToggled`: tick rồi bỏ tick thật nhanh, kết quả cuối vẫn là "bỏ tick" (có test) |
 
 Ghép thêm `debounce` (package `stream_transform`) cho ô tìm kiếm:
 
@@ -221,6 +225,7 @@ Có test riêng cho tình huống này: "kết quả LỖI THỜI bị bỏ" tro
 |---|---|---|---|---|
 | Bloc của MỘT màn | `@injectable` (mỗi lần lấy một instance mới) | `BlocProvider(create: (_) => getIt<...>())` trong router | `BlocProvider` tự `close()` khi rời màn | `ProductListBloc`, `LoginBloc`, `ProductDetailCubit`, `AccountCubit` |
 | Bloc TOÀN CỤC | `@lazySingleton` | `bootstrap.dart`, đưa vào cây widget bằng `BlocProvider.value` | Sống suốt đời app | `AuthBloc`, `SettingsCubit` |
+| Bloc của MỘT KHUNG (dùng chung cho nhiều tab) | `@injectable` | `BlocProvider` trong `builder` của `StatefulShellRoute` | Sống cùng khung tab | `TaskSummaryCubit` (huy hiệu trên thanh tab + tab Thống kê) |
 
 - `BlocProvider(create: ...)` = provider **sở hữu** Bloc và tự đóng nó.
   `BlocProvider.value(value: ...)` = chỉ **chia sẻ**, không đóng. Dùng nhầm
@@ -263,6 +268,31 @@ Future<void> close() async {
 repository đổi trạng thái, stream phát ra, rồi `emit.forEach` mới emit. Vì
 vậy đăng xuất từ đâu (màn cài đặt, interceptor báo hết phiên...) thì UI cũng
 đồng bộ.
+
+feature_todo đẩy ý tưởng này lên cả một feature: **database (drift) là nguồn
+sự thật**. `TaskListBloc`, `TaskDetailCubit`, `TaskSummaryCubit` đều NGHE
+`watch()` của database. Bấm tick thì Bloc chỉ gọi use case ghi, **không** tự
+sửa `state.tasks`; database phát danh sách mới tới mọi nơi đang nghe.
+
+```dart
+// feature_todo/.../list/task_list_bloc.dart
+await emit.forEach<List<Task>>(
+  _watchTasks(),
+  onData: (tasks) => state.copyWith(status: TaskListStatus.ready, tasks: tasks),
+  onError: (error, _) => state.copyWith(status: TaskListStatus.failure, ...),
+);
+```
+
+### Kết quả "một lần" (SnackBar báo lỗi ghi)
+
+Lỗi ghi là chuyện xảy ra một lần, không phải trạng thái lâu dài.
+
+- **Bloc:** `add(event)` không trả về gì, nên kết quả phải đi qua state. Phát
+  state có lỗi rồi phát ngay state không lỗi (`TaskListBloc._emitWriteFailure`).
+  BlocListener thấy đủ hai lần đổi, nên lần sau gặp ĐÚNG lỗi đó (bằng nhau theo
+  Equatable) vẫn hiện SnackBar lại.
+- **Cubit:** hàm trả về được kết quả: `Future<Failure?> delete()`. Màn hình
+  `await` rồi tự hiện SnackBar hoặc đóng màn (`TaskDetailPage._delete`).
 
 ## 8. Dùng trong UI
 
@@ -343,6 +373,8 @@ blocTest<ProductListBloc, ProductListState>(
 | Kết quả tìm kiếm cũ đè kết quả mới | Thiếu `restartable` hoặc thiếu kiểm tra "thế hệ" | Mục 4 và 5 |
 | Mật khẩu xuất hiện trong log | `toString()` của event/state in mật khẩu | Che trong `toString()` (xem `LoginState`) |
 | Widget test bị timeout | `pumpAndSettle` với vòng xoay | Dùng `pump()` hoặc chọn state tĩnh |
+| Test treo đúng 30 giây ở `tearDown` | `await controller.close()` trên StreamController CHƯA AI NGHE: Future đó không bao giờ xong | `tearDown(() => unawaited(controller.close()))` (xem test của feature_todo) |
+| Trang chi tiết chớp "không tìm thấy" khi vừa xoá | Database phát `null` ngay sau khi xoá, trong lúc màn đang chạy hiệu ứng đóng | Cờ `_isDeleting` bỏ qua `null` đó (`TaskDetailCubit`) |
 
 ## 12. Checklist khi thêm Bloc/Cubit mới
 

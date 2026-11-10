@@ -16,6 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:l10n/l10n.dart';
 import 'package:main_app/router/app_router.dart';
+import 'package:main_app/router/app_routes.dart';
 import 'package:main_app/router/stream_listenable.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -26,6 +27,7 @@ class App extends StatefulWidget {
     required this.config,
     required this.authBloc,
     required this.settingsCubit,
+    this.initialLocation = AppRoutes.splash,
     super.key,
   });
 
@@ -37,6 +39,10 @@ class App extends StatefulWidget {
 
   /// Cubit cài đặt toàn cục (theme, ngôn ngữ).
   final SettingsCubit settingsCubit;
+
+  /// Đường dẫn mở lúc khởi động. Test đổi giá trị này để giả lập mở app từ
+  /// một deep link, vd `/tasks/123`.
+  final String initialLocation;
 
   @override
   State<App> createState() => _AppState();
@@ -54,6 +60,7 @@ class _AppState extends State<App> {
   late final GoRouter _router = createAppRouter(
     authBloc: widget.authBloc,
     refreshListenable: _authChanges,
+    initialLocation: widget.initialLocation,
   );
 
   @override

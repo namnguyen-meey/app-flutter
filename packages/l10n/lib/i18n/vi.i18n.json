@@ -45,7 +45,9 @@
   },
   "nav": {
     "products": "Sản phẩm",
-    "settings": "Cài đặt"
+    "settings": "Cài đặt",
+    "tasks": "Công việc",
+    "statistics": "Thống kê"
   },
   "products": {
     "searchHint": "Tìm sản phẩm...",
@@ -62,5 +64,114 @@
     "inStock": "Còn $count sản phẩm",
     "outOfStock": "Hết hàng",
     "description": "Mô tả"
+  },
+  "tasks": {
+    "title": "Công việc của tôi",
+    "subtitle": "Lên kế hoạch, theo dõi và hoàn thành từng việc một.",
+    "add": "Thêm việc",
+    "searchHint": "Tìm công việc...",
+    "progress": "Đã xong $completed/$total việc",
+    "filter": {
+      "all": "Tất cả",
+      "active": "Chưa xong",
+      "completed": "Đã xong"
+    },
+    "priority": {
+      "label": "Độ ưu tiên",
+      "low": "Thấp",
+      "medium": "Trung bình",
+      "high": "Cao"
+    },
+    "emptyTitle": "Chưa có công việc nào",
+    "emptyMessage": "Nhấn “Thêm việc” để tạo công việc đầu tiên.",
+    "noResultsTitle": "Không có công việc phù hợp",
+    "noResultsMessage": "Thử từ khoá khác hoặc chọn bộ lọc khác.",
+    "dueDate": "Hạn",
+    "noDueDate": "Không có hạn",
+    "yesterday": "Hôm qua",
+    "today": "Hôm nay",
+    "tomorrow": "Ngày mai",
+    "dueOn": "Hạn: $date",
+    "overdueOn": "Quá hạn · $date",
+    "createdAt": "Tạo lúc",
+    "createdOn": "Tạo lúc $time",
+    "markCompleted": "Đánh dấu hoàn thành",
+    "markActive": "Đánh dấu chưa xong",
+    "statusCompleted": "Hoàn thành",
+    "statusActive": "Đang làm",
+    "detailTitle": "Chi tiết công việc",
+    "edit": "Sửa công việc",
+    "duplicate": "Nhân bản",
+    "delete": "Xoá công việc",
+    "deleteConfirmTitle": "Xoá công việc?",
+    "deleteConfirmMessage": "“$title” sẽ bị xoá vĩnh viễn.",
+    "deleteConfirm": "Xoá",
+    "pageAddress": "Đường dẫn của trang này",
+    "notFoundTitle": "Không tìm thấy công việc",
+    "notFoundMessage": "Không có công việc nào có mã “$id”. Có thể nó đã bị xoá.",
+    "editor": {
+      "createTitle": "Thêm công việc",
+      "editTitle": "Sửa công việc",
+      "title": "Tiêu đề",
+      "titleHint": "Ví dụ: Học Flutter 30 phút",
+      "titleRequired": "Vui lòng nhập tiêu đề",
+      "description": "Mô tả",
+      "descriptionHint": "Ghi chú thêm (không bắt buộc)",
+      "pickDueDate": "Chọn hạn",
+      "clearDueDate": "Bỏ hạn",
+      "dueDateHelp": "Chọn ngày hết hạn",
+      "save": "Lưu",
+      "close": "Đóng"
+    },
+    "statistics": {
+      "subtitle": "Nhìn lại tiến độ để lên kế hoạch tốt hơn.",
+      "emptyTitle": "Chưa có dữ liệu",
+      "emptyMessage": "Hãy thêm công việc để xem tiến độ.",
+      "openTasks": "Đi tới Công việc",
+      "progressTitle": "Tiến độ hoàn thành",
+      "allDone": "Tuyệt vời! Mọi công việc đều đã xong.",
+      "progressMessage": "Đã xong $completed/$total công việc, còn $remaining việc.",
+      "byDeadline": "Việc chưa xong theo thời hạn",
+      "overdue": "Quá hạn",
+      "dueToday": "Hôm nay",
+      "upcoming": "Sắp tới",
+      "noDueDate": "Không có hạn",
+      "byPriority": "Tiến độ theo độ ưu tiên",
+      "priorityProgress": "$completed/$total"
+    }
+  },
+  "notFound": {
+    "title": "Không tìm thấy trang",
+    "message": "Đường dẫn “$location” không tồn tại trong ứng dụng.",
+    "invalidTaskTitle": "Mã công việc không hợp lệ",
+    "invalidTaskMessage": "“$id” không phải là mã công việc. Mã chỉ gồm chữ số.",
+    "backHome": "Về trang chủ"
+  },
+  "navLab": {
+    "entry": "Học điều hướng (GoRouter)",
+    "entrySubtitle": "Thử go/push, deep link, trang lỗi, ShellRoute",
+    "title": "Học điều hướng",
+    "intro": "Mỗi mục là một thí nghiệm nhỏ. Giải thích chi tiết ở docs/NAVIGATION_GUIDE.md.",
+    "currentLocation": "Đang ở: $location",
+    "sectionLinks": "Đường dẫn và tham số",
+    "completedTasks": "Xem việc đã xong",
+    "notFound": "Mở trang không tồn tại",
+    "invalidTask": "Mở công việc với mã sai",
+    "missingTask": "Mở công việc không còn tồn tại",
+    "sectionShell": "Tab và nhiều navigation stack",
+    "shellDemo": "Demo ShellRoute",
+    "statefulShellDemo": "Demo StatefulShellRoute",
+    "shellDemoHint": "Tăng số đếm ở tab A, mở trang con, sang tab B rồi quay lại.",
+    "demo": {
+      "counter": "Đã bấm $count lần",
+      "increase": "Tăng bộ đếm",
+      "openChild": "Mở trang con",
+      "childTitle": "Trang con của $tab",
+      "childMessage": "Trang này nằm trong stack của $tab. Sang tab khác rồi quay lại để xem nó còn hay mất.",
+      "exit": "Thoát demo",
+      "createdAt": "Trang này được tạo lúc $time",
+      "tryHint": "Thử: tăng bộ đếm, mở trang con, chuyển sang tab kia rồi quay lại tab này. Bộ đếm, giờ tạo trang và trang con có còn không?",
+      "back": "Quay lại"
+    }
   }
 }

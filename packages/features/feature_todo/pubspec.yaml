@@ -1,0 +1,36 @@
+name: feature_todo
+description: "Tính năng công việc (todo): danh sách, tìm kiếm, lọc, chi tiết, tạo/sửa, thống kê. Lưu trên máy bằng drift."
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+# Package nội bộ (core, design_system, l10n, shared_domain) khai báo ^0.1.0:
+# pub tự lấy bản nằm trong workspace, không tải từ pub.dev.
+dependencies:
+  bloc: ^9.2.1
+  bloc_concurrency: ^0.3.0
+  core: ^0.1.0
+  design_system: ^0.1.0
+  drift: ^2.35.4
+  drift_flutter: ^0.3.1
+  equatable: ^3.0.0
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  fpdart: ^1.2.0
+  injectable: ^3.0.0
+  intl: ^0.20.3
+  l10n: ^0.1.0
+  material_ui: ^1.10.0
+  shared_domain: ^0.1.0
+dev_dependencies:
+  bloc_test: ^10.0.0
+  build_runner: ^2.16.1
+  drift_dev: ^2.35.3
+  flutter_test:
+    sdk: flutter
+  injectable_generator: ^3.1.3
+  mocktail: ^1.0.5

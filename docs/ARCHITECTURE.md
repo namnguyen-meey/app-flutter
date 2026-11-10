@@ -2,7 +2,8 @@
 
 > Tài liệu liên quan: [LEARNING_PATH](LEARNING_PATH.md) (đọc repo theo thứ
 > tự nào), [PACKAGES](PACKAGES.md), [BLOC_GUIDE](BLOC_GUIDE.md),
-> [CONTRIBUTING](CONTRIBUTING.md), [OBSERVABILITY](OBSERVABILITY.md).
+> [CONTRIBUTING](CONTRIBUTING.md), [OBSERVABILITY](OBSERVABILITY.md),
+> [NAVIGATION_GUIDE](NAVIGATION_GUIDE.md).
 
 ## 1. Bản đồ repo
 
@@ -12,8 +13,7 @@
 ├── analysis_options.yaml     # very_good_analysis, dùng chung toàn repo
 ├── apps/
 │   ├── main_app/             # app chính: flavor, DI tổng, router
-│   ├── widgetbook_app/       # catalog UI cho design system
-│   └── todo_app/             # Todo app cũ: NGOÀI workspace, chưa theo các quy tắc dưới đây
+│   └── widgetbook_app/       # catalog UI cho design system
 ├── packages/
 │   ├── shared_domain/        # Dart thuần: Failure, UseCase, entity/interface dùng chung
 │   ├── core/                 # network, storage, logger, config, DI nền
@@ -22,7 +22,8 @@
 │   └── features/
 │       ├── feature_auth/
 │       ├── feature_product/
-│       └── feature_settings/
+│       ├── feature_settings/
+│       └── feature_todo/     # công việc + thống kê (từ Todo app cũ)
 ├── tools/
 │   └── arch_check/           # công cụ kiểm tra quy tắc kiến trúc
 └── docs/
@@ -37,10 +38,10 @@ xuống**, không bao giờ đi lên hay đi ngang giữa các feature.
 Tầng 4 · app        main_app ─────────► (mọi package bên dưới)
                     widgetbook_app ───► design_system, l10n
 
-Tầng 3 · feature    feature_auth     feature_product     feature_settings
-                         │                  │                   │
-                         │   ✗ KHÔNG phụ thuộc lẫn nhau ✗        │
-                         └──────────────────┼───────────────────┘
+Tầng 3 · feature    feature_auth   feature_product   feature_settings   feature_todo
+                         │               │                 │                │
+                         │        ✗ KHÔNG phụ thuộc lẫn nhau ✗              │
+                         └───────────────┴────────┬────────┴────────────────┘
                                             ▼
                      mỗi feature ──► core, design_system, l10n, shared_domain
 
@@ -131,6 +132,18 @@ presentation layer. Tại sao phải khắt khe vậy?
   cung cấp "làm thế nào".
 - Mọi lỗi được chuyển thành `Failure` ngay trong RepositoryImpl. Từ đó trở
   lên chỉ còn `Either<Failure, T>`, không còn `try/catch` hay `DioException`.
+
+**Hai kiểu repository trong repo:**
+
+| | feature_product | feature_todo |
+|---|---|---|
+| Nguồn sự thật | Server (dummyjson); database chỉ là CACHE | Database trên máy (drift) |
+| Đọc | `Future<Either<Failure, T>>`: hỏi một lần | `Stream<T>`: NGHE, tự phát lại khi dữ liệu đổi |
+| Sau khi ghi | (không ghi) | Không ai cập nhật UI bằng tay: stream tự phát, mọi màn đang nghe tự đổi |
+| Lỗi đọc | `Left(Failure)` | Lỗi của stream, giá trị là `Failure` |
+
+Kiểu "database là nguồn sự thật duy nhất" giải thích kỹ ở
+[NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md) mục 13 và README của feature_todo.
 
 ## 6. Dependency Injection giữa nhiều package
 
@@ -266,16 +279,21 @@ Router (go_router) nằm ở `main_app`, nơi duy nhất biết mọi feature.
 ```
                  ┌───────────── refreshListenable ◄── AuthBloc.stream
                  ▼
- mọi lần điều hướng ──► redirect = redirectForAuth(AuthBloc.state, location)
-                          AuthUnknown      ─► /splash
-                          Unauthenticated  ─► /login
-                          Authenticated    ─► ở lại (rời /splash, /login thì về /products)
+ mọi lần điều hướng ──► redirect = redirectForAuth(AuthBloc.state, state.uri)
+                          AuthUnknown      ─► /splash?from=<trang định mở>  (app vừa mở)
+                          Unauthenticated  ─► /login (mang theo `from` nếu đi từ /splash)
+                          Authenticated    ─► ở lại (rời /splash, /login thì về `from`,
+                                              không có thì về /products)
 
- /products, /settings nằm trong StatefulShellRoute.indexedStack (bottom navigation,
- mỗi tab giữ trạng thái riêng)
- /products/:id là route CON của /products: mở chi tiết thì danh sách vẫn nằm
- bên dưới (back là về đúng chỗ đang cuộn), bottom navigation vẫn hiện.
+ 4 tab (/products, /tasks, /statistics, /settings) nằm trong
+ StatefulShellRoute.indexedStack: mỗi tab một Navigator, giữ trạng thái riêng.
+ /products/:id, /tasks/:taskId là route CON: mở chi tiết thì danh sách vẫn nằm
+ bên dưới, thanh tab vẫn hiện. Form tạo/sửa công việc mở ở Navigator GỐC (che
+ thanh tab).
 ```
+
+Toàn bộ về điều hướng (go/push, tham số URL, `extra`, deep link, nhiều stack,
+ShellRoute vs StatefulShellRoute) ở [NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md).
 
 **Feature không biết đường dẫn.** Màn danh sách sản phẩm không gọi
 `context.go('/products/5')`; nó chỉ nhận callback `onProductTap(id)`. Router

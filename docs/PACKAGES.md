@@ -22,6 +22,7 @@ tay.
 | `feature_auth` | 3. Feature | Đăng nhập, phiên, làm mới token, đăng xuất | `core`, `design_system`, `l10n`, `shared_domain` |
 | `feature_product` | 3. Feature | Danh sách phân trang, tìm kiếm, chi tiết, cache offline | như trên |
 | `feature_settings` | 3. Feature | Theme, ngôn ngữ, tài khoản | như trên |
+| `feature_todo` | 3. Feature | Công việc: danh sách, tìm kiếm, lọc, tạo/sửa/nhân bản/xoá, thống kê; lưu bằng drift | như trên |
 | `main_app` | 4. App | Ghép mọi thứ: DI gốc, router, flavor, bootstrap | mọi package |
 | `widgetbook_app` | 4. App | Catalog UI của design system | `design_system` |
 | `tools/arch_check` | Công cụ | Kiểm tra quy tắc phụ thuộc giữa package | (không package nội bộ nào) |
@@ -42,7 +43,7 @@ mục 3 và 11.
 | `fpdart` | `Either<Failure, T>`, `TaskEither` | `shared_domain`, `core`, features | `dartz` (không ra phiên bản mới từ 2021), `sealed class Result` tự viết | Được duy trì, API hợp với Dart 3. Lỗi nằm trong kiểu trả về nên không thể quên xử lý |
 | `get_it` | Service locator (kho chứa dependency) | `core`, `main_app` | Riverpod, `provider` | Không phụ thuộc cây widget; Bloc/repository lấy được dependency ở bất kỳ đâu |
 | `injectable` | Sinh code đăng ký `get_it` từ annotation | mọi package có DI | Đăng ký `get_it` bằng tay | Mỗi package tự khai báo phần DI của mình (micro package), app chỉ ghép module. Xem ARCHITECTURE mục 6 |
-| `go_router` | Điều hướng, deep link, guard | `main_app` | `auto_route` | Package chính thức của Flutter; `redirect` + `refreshListenable` làm guard đăng nhập gọn |
+| `go_router` | Điều hướng, deep link, guard | `main_app` | `auto_route` | Package chính thức của Flutter; `redirect` + `refreshListenable` làm guard đăng nhập gọn. Xem [NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md) |
 
 ### Mạng và dữ liệu
 
@@ -52,10 +53,10 @@ mục 3 và 11.
 | `retrofit` | Sinh API client từ interface | features (data) | Viết dio bằng tay, `chopper` | Khai báo endpoint gọn, có kiểu; `@Extra` để đánh dấu request không cần token |
 | `freezed`, `freezed_annotation` | Sinh `==`, `copyWith`, `toString` cho DTO | features (data) | `equatable` + viết tay | Kết hợp với json_serializable cho DTO. Xem ARCHITECTURE mục 9 |
 | `json_serializable`, `json_annotation` | Sinh `fromJson`/`toJson` | features (data) | `dart_mappable` | Chuẩn phổ biến nhất, tài liệu nhiều |
-| `drift`, `drift_flutter` | Cơ sở dữ liệu SQLite có kiểu, cache offline | `feature_product` | `sqflite` (SQL thô), `objectbox`, `isar` và `hive` (bản gốc không ra phiên bản mới từ 2023 và 2022; cộng đồng duy trì bản fork như `hive_ce`) | Truy vấn có kiểu, sinh code, migration rõ ràng, test với DB trong bộ nhớ |
+| `drift`, `drift_flutter` | Cơ sở dữ liệu SQLite có kiểu: cache offline (`feature_product`), nguồn dữ liệu chính có `watch()` (`feature_todo`) | `feature_product`, `feature_todo` | `sqflite` (SQL thô), `objectbox`, `isar` và `hive` (bản gốc không ra phiên bản mới từ 2023 và 2022; cộng đồng duy trì bản fork như `hive_ce`) | Truy vấn có kiểu, sinh code, migration rõ ràng, test với DB trong bộ nhớ |
 | `shared_preferences` | Lưu cài đặt nhỏ (theme, ngôn ngữ) | `core` | `hive` | Đủ cho dữ liệu key-value nhỏ; `SharedPreferencesWithCache` đọc đồng bộ |
 | `flutter_secure_storage` | Lưu token an toàn (Keychain/Keystore) | `core`, `feature_auth` | Không có lựa chọn tương đương phổ biến | Token tuyệt đối không lưu ở shared_preferences |
-| `intl` | Định dạng tiền, số theo ngôn ngữ | `feature_product` | (chuẩn) | `NumberFormat` theo locale |
+| `intl` | Định dạng tiền, số, ngày | `feature_product`, `feature_todo` | (chuẩn) | `NumberFormat` theo locale, `DateFormat('dd/MM/yyyy')` |
 
 ### Giao diện
 

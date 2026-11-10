@@ -2,7 +2,7 @@
 // app_text_field.dart: ô nhập liệu dùng chung, có sẵn chế độ mật khẩu.
 //
 // Thuộc: design_system/components.
-// Được dùng bởi: màn đăng nhập, ô tìm kiếm sản phẩm...
+// Được dùng bởi: màn đăng nhập, ô tìm kiếm sản phẩm, form công việc...
 //
 // Lỗi validate KHÔNG tự tính trong widget này mà nhận qua `errorText`: việc
 // kiểm tra dữ liệu là logic, thuộc về Bloc. Widget chỉ hiển thị.
@@ -27,8 +27,13 @@ class AppTextField extends StatefulWidget {
     this.enabled = true,
     this.isPassword = false,
     this.passwordToggleTooltips,
+    this.maxLines = 1,
+    this.minLines,
+    this.maxLength,
+    this.autofocus = false,
+    this.textCapitalization = TextCapitalization.none,
     super.key,
-  });
+  }) : assert(!isPassword || maxLines == 1, 'Ô mật khẩu chỉ được có một dòng.');
 
   /// Controller (tuỳ chọn) để đọc/ghi nội dung từ bên ngoài.
   final TextEditingController? controller;
@@ -70,6 +75,21 @@ class AppTextField extends StatefulWidget {
   /// 2 tham số rời để luôn truyền đủ cặp "hiện"/"ẩn".
   final ({String show, String hide})? passwordToggleTooltips;
 
+  /// Số dòng tối đa. `null` = tự giãn theo nội dung (ô mô tả nhiều dòng).
+  final int? maxLines;
+
+  /// Số dòng hiển thị tối thiểu (vd: 3 cho ô mô tả).
+  final int? minLines;
+
+  /// Giới hạn số ký tự; có giá trị thì hiện bộ đếm "12/100" bên dưới.
+  final int? maxLength;
+
+  /// Tự focus (mở bàn phím) khi màn hình hiện ra.
+  final bool autofocus;
+
+  /// Tự viết hoa (vd: chữ đầu câu cho tiêu đề).
+  final TextCapitalization textCapitalization;
+
   @override
   State<AppTextField> createState() => _AppTextFieldState();
 }
@@ -90,6 +110,11 @@ class _AppTextFieldState extends State<AppTextField> {
       onChanged: widget.onChanged,
       onSubmitted: widget.onSubmitted,
       obscureText: _obscured,
+      maxLines: widget.maxLines,
+      minLines: widget.minLines,
+      maxLength: widget.maxLength,
+      autofocus: widget.autofocus,
+      textCapitalization: widget.textCapitalization,
       // Ô mật khẩu: tắt gợi ý và tự sửa để bàn phím không ghi nhớ mật khẩu.
       autocorrect: !widget.isPassword,
       enableSuggestions: !widget.isPassword,

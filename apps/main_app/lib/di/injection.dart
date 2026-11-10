@@ -14,6 +14,7 @@ import 'package:core/core.dart';
 import 'package:feature_auth/feature_auth.dart';
 import 'package:feature_product/feature_product.dart';
 import 'package:feature_settings/feature_settings.dart';
+import 'package:feature_todo/feature_todo.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:main_app/di/injection.config.dart';
@@ -33,6 +34,7 @@ final GetIt getIt = GetIt.instance;
     ExternalModule(FeatureAuthPackageModule),
     ExternalModule(FeatureProductPackageModule),
     ExternalModule(FeatureSettingsPackageModule),
+    ExternalModule(FeatureTodoPackageModule),
   ],
   // Ở app gốc, thiếu dependency là lỗi thật: dừng build ngay thay vì chỉ
   // in cảnh báo rồi đợi tới lúc chạy mới crash.

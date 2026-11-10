@@ -10,7 +10,7 @@ và mỗi chặng có:
 - **Bài tập**: sửa code thật. Làm trên một nhánh riêng, chạy
   `melos run analyze && melos run test` sau mỗi bài.
 
-Thời gian gợi ý cho người đã biết Flutter cơ bản: 1–2 tuần, mỗi ngày một chặng.
+Thời gian gợi ý cho người đã biết Flutter cơ bản: 2 tuần, mỗi ngày một chặng.
 
 ---
 
@@ -149,7 +149,40 @@ nguyên luật chống kết quả lỗi thời, có test cho tình huống đ�
 - Mở app lần đầu sau khi chọn theme Tối: vì sao không thấy màn hình chớp
   sáng rồi mới tối?
 
-## Chặng 8: Giao diện và kiểm thử giao diện
+## Chặng 8: Dữ liệu trên máy và điều hướng nâng cao (`feature_todo`)
+
+Todo app bạn viết trước đây, viết lại theo chuẩn của repo. Đọc chặng này để
+thấy CÙNG một tính năng thay đổi thế nào khi đi từ "một app nhỏ" sang "chuẩn
+team lớn".
+
+**Đọc** theo thứ tự:
+1. `packages/features/feature_todo/README.md` (bảng "so với Todo app cũ")
+2. `domain/entities/` (`task.dart`, `task_filter.dart`, `task_summary.dart`)
+3. `data/local/todo_database.dart`, `data/repositories/task_repository_impl.dart`
+4. `presentation/list/task_list_bloc.dart`,
+   `presentation/statistics/task_summary_cubit.dart`
+5. [NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md) từ đầu tới cuối, mở song song
+   `apps/main_app/lib/router/`.
+
+**Làm:** trong app, vào **Cài đặt → Học điều hướng** và thử từng mục. Tick
+một việc quá hạn rồi nhìn huy hiệu đỏ trên tab Công việc và tab Thống kê.
+
+**Tự trả lời:**
+- Tick một việc ở danh sách: những màn nào tự cập nhật, và vì sao không màn
+  nào phải "báo" cho màn nào? (Gợi ý: `watch()` của drift.)
+- `TaskListBloc` báo lỗi ghi qua state, còn `TaskDetailCubit` trả lỗi qua giá
+  trị trả về của hàm. Vì sao hai cách khác nhau?
+- Mở `/tasks/123` khi chưa đăng nhập: router đi qua những URL nào trước khi tới
+  trang chi tiết? Tham số `from` nằm ở đâu?
+- Vì sao mở chi tiết dùng `push`, còn đổi bộ lọc dùng `go`?
+- Form tạo công việc mở ở Navigator nào? Thay đổi gì nếu bỏ
+  `parentNavigatorKey`?
+
+**Bài tập:** làm bài tập ở mục 14 của NAVIGATION_GUIDE (thêm
+`?sort=newest|oldest|priority`). Có unit test cho hàm sắp xếp ở domain, widget
+test cho màn danh sách, và test router cho đường dẫn có `?sort=`.
+
+## Chặng 9: Giao diện và kiểm thử giao diện
 
 **Đọc:** `packages/design_system/lib/src/theme/`, một component bất kỳ, README
 của `design_system` và `widgetbook_app`.
@@ -167,7 +200,7 @@ vào design_system: viết widget, use case widgetbook (smoke test tự phủ), 
 golden test sáng/tối. Rồi dùng nó để hiển thị tình trạng kho (còn hàng/hết
 hàng) ở màn chi tiết, thay cho dòng chữ hiện tại.
 
-## Chặng 9: Quy trình team
+## Chặng 10: Quy trình team
 
 **Đọc:** `pubspec.yaml` ở root (phần `melos:`), `tools/arch_check/`,
 `.github/workflows/ci.yaml`, [CONTRIBUTING.md](CONTRIBUTING.md),
@@ -182,7 +215,8 @@ hàng) ở màn chi tiết, thay cho dòng chữ hiện tại.
 Tạo feature mới "Sản phẩm yêu thích":
 - Lưu danh sách id yêu thích bằng drift.
 - Nút trái tim ở màn chi tiết.
-- Tab thứ ba hiện danh sách yêu thích.
+- Thêm một tab hiện danh sách yêu thích (nhớ quy tắc "số tab = số branch",
+  NAVIGATION_GUIDE mục 11).
 
 Yêu cầu:
 - Package mới trong `packages/features/`, làm theo ARCHITECTURE mục 12.
