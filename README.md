@@ -1,4 +1,24 @@
-# flutter_monorepo_sample
+# my_flutter_app
+
+Repo học Flutter, gồm 2 app nằm chung một monorepo:
+
+| App | Ở đâu | Là gì |
+|---|---|---|
+| **main_app** | `apps/main_app` | App bán hàng mẫu theo chuẩn team lớn (phần lớn README này nói về nó) |
+| **todo_app** | `apps/todo_app` | Todo app viết trước đó: lưu local, tab dưới, go_router. Có README riêng |
+
+Todo app **chưa** theo chuẩn của monorepo: không nằm trong `workspace:`,
+dùng bộ lint `flutter_lints` riêng, và các script `melos` (analyze, format,
+test) cũng như CI đều bỏ qua nó. Chạy và kiểm tra Todo app ngay trong thư mục
+của nó:
+
+```bash
+cd apps/todo_app
+flutter pub get && flutter analyze && flutter test
+flutter run            # hoặc chọn "todo_app" trong Run and Debug của VS Code
+```
+
+---
 
 Codebase mẫu Flutter theo chuẩn team lớn: **monorepo nhiều package**, Bloc,
 Clean Architecture, quy trình chất lượng chặt. Mục đích chính là để học cách
@@ -134,7 +154,8 @@ Integration test không chạy trên CI (cần simulator). Golden test fail thì
 ```
 apps/
 ├── main_app/            # app chính: bootstrap, DI gốc, router, flavor
-└── widgetbook_app/      # catalog UI của design system
+├── widgetbook_app/      # catalog UI của design system
+└── todo_app/            # Todo app (ngoài workspace, xem đầu README)
 packages/
 ├── shared_domain/       # Failure, UseCase, User, AuthSession (Dart thuần)
 ├── core/                # config, logger, network, storage, DI nền

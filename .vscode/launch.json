@@ -1,9 +1,17 @@
 {
-  // Cấu hình chạy app cho VS Code: mở tab "Run and Debug" rồi chọn flavor.
-  // Mỗi mục tương đương lệnh:
+  // Cấu hình chạy app cho VS Code: mở tab "Run and Debug" rồi chọn một mục.
+  // Mỗi mục main_app tương đương lệnh:
   //   cd apps/main_app && flutter run --flavor <flavor> -t lib/main_<flavor>.dart
   "version": "0.2.0",
   "configurations": [
+    {
+      // Todo app: không có flavor, tương đương `cd apps/todo_app && flutter run`.
+      "name": "todo_app",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/todo_app",
+      "program": "lib/main.dart"
+    },
     {
       "name": "main_app (dev)",
       "request": "launch",

@@ -12,7 +12,8 @@
 ├── analysis_options.yaml     # very_good_analysis, dùng chung toàn repo
 ├── apps/
 │   ├── main_app/             # app chính: flavor, DI tổng, router
-│   └── widgetbook_app/       # catalog UI cho design system
+│   ├── widgetbook_app/       # catalog UI cho design system
+│   └── todo_app/             # Todo app cũ: NGOÀI workspace, chưa theo các quy tắc dưới đây
 ├── packages/
 │   ├── shared_domain/        # Dart thuần: Failure, UseCase, entity/interface dùng chung
 │   ├── core/                 # network, storage, logger, config, DI nền
